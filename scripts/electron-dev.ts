@@ -213,8 +213,17 @@ function getElectronEnv(): Record<string, string> {
   // It checks: CODEX_PATH env var > bundled binary > local dev fork > system PATH.
   // You can override with CODEX_PATH env var if needed for debugging.
 
+  // Build env from process.env, excluding CLAUDECODE to allow nested sessions
+  // (needed when developing Craft Agents inside Claude Code)
+  const env: Record<string, string> = {};
+  for (const [key, value] of Object.entries(process.env)) {
+    if (key !== 'CLAUDECODE' && value !== undefined) {
+      env[key] = value;
+    }
+  }
+
   return {
-    ...process.env as Record<string, string>,
+    ...env,
     VITE_DEV_SERVER_URL: `http://localhost:${vitePort}`,
     IWEATHER_CONFIG_DIR: process.env.IWEATHER_CONFIG_DIR || "",
     CRAFT_APP_NAME: process.env.CRAFT_APP_NAME || "Craft Agents",
@@ -356,6 +365,51 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  // Patch import_meta.resolve in main.cjs
+  console.log("🔧 Patching import.meta.resolve polyfill...");
+  const mainCjsContent = readFileSync(mainCjsPath, "utf-8");
+  // Match both patterns: "var import_meta4 = {};" and "import_meta4 = {};"
+  const importMetaPattern = /(var\s+)?(import_meta\d+)\s*=\s*\{\};/g;
+  const importMetaVars: string[] = [];
+  let match;
+  while ((match = importMetaPattern.exec(mainCjsContent)) !== null) {
+    if (!importMetaVars.includes(match[2])) {
+      importMetaVars.push(match[2]);
+    }
+  }
+
+  if (importMetaVars.length > 0) {
+    const polyfill = `
+// Polyfill for import.meta.resolve - esbuild transforms it incorrectly for CJS
+const __path = require('path');
+const __url = require('url');
+function __importMetaResolve(specifier) {
+  try {
+    const resolved = require.resolve(specifier);
+    return __url.pathToFileURL(resolved).href;
+  } catch (e) {
+    if (specifier === '@github/copilot/sdk') {
+      const sdkPath = require.resolve('@github/copilot-sdk');
+      const indexPath = __path.join(__path.dirname(__path.dirname(sdkPath)), 'sdk', 'index.js');
+      return __url.pathToFileURL(indexPath).href;
+    }
+    throw e;
+  }
+}
+`;
+    let patchedContent = polyfill + mainCjsContent;
+    for (const varName of importMetaVars) {
+      // Replace both patterns
+      patchedContent = patchedContent.replace(
+        new RegExp(`(var\\s+)?${varName}\\s*=\\s*\\{\\};`, 'g'),
+        `$1${varName} = { resolve: __importMetaResolve };`
+      );
+    }
+    const { writeFileSync } = await import("fs");
+    writeFileSync(mainCjsPath, patchedContent);
+    console.log(`✅ Patched ${importMetaVars.length} import_meta variable(s)`);
+  }
+
   // Wait for files to stabilize (filesystem flush)
   console.log("⏳ Waiting for build files to stabilize...");
   const [mainStable, preloadStable] = await Promise.all([
@@ -407,6 +461,66 @@ async function main(): Promise<void> {
   processes.push(viteProc);
 
   // 2. Main process watcher (using esbuild watch API)
+  // Plugin to patch import.meta.resolve for @github/copilot-sdk
+  const importMetaResolvePlugin: esbuild.Plugin = {
+    name: 'import-meta-resolve-polyfill',
+    setup(build) {
+      build.onEnd(async (result) => {
+        if (result.errors.length > 0) return;
+
+        const outfile = join(ROOT_DIR, "apps/electron/dist/main.cjs");
+        if (!existsSync(outfile)) return;
+
+        let content = readFileSync(outfile, "utf-8");
+
+        // Check if patching is needed - match both "var import_meta4 = {};" and "import_meta4 = {};"
+        const importMetaPattern = /(var\s+)?(import_meta\d+)\s*=\s*\{\};/g;
+        const importMetaVars: string[] = [];
+        let match;
+        while ((match = importMetaPattern.exec(content)) !== null) {
+          if (!importMetaVars.includes(match[2])) {
+            importMetaVars.push(match[2]);
+          }
+        }
+
+        if (importMetaVars.length === 0) return;
+
+        // Add polyfill at the top
+        const polyfill = `
+// Polyfill for import.meta.resolve - esbuild transforms it incorrectly for CJS
+const __path = require('path');
+const __url = require('url');
+function __importMetaResolve(specifier) {
+  try {
+    const resolved = require.resolve(specifier);
+    return __url.pathToFileURL(resolved).href;
+  } catch (e) {
+    if (specifier === '@github/copilot/sdk') {
+      const sdkPath = require.resolve('@github/copilot-sdk');
+      const indexPath = __path.join(__path.dirname(__path.dirname(sdkPath)), 'sdk', 'index.js');
+      return __url.pathToFileURL(indexPath).href;
+    }
+    throw e;
+  }
+}
+`;
+        content = polyfill + content;
+
+        // Add resolve method to each import_meta variable
+        for (const varName of importMetaVars) {
+          content = content.replace(
+            new RegExp(`(var\\s+)?${varName}\\s*=\\s*\\{\\};`, 'g'),
+            `$1${varName} = { resolve: __importMetaResolve };`
+          );
+        }
+
+        const { writeFileSync } = await import("fs");
+        writeFileSync(outfile, content);
+        console.log(`🔧 Patched ${importMetaVars.length} import_meta variable(s)`);
+      });
+    }
+  };
+
   const mainContext = await esbuild.context({
     entryPoints: [join(ROOT_DIR, "apps/electron/src/main/index.ts")],
     bundle: true,
@@ -416,6 +530,7 @@ async function main(): Promise<void> {
     external: ["electron"],
     define: oauthDefines,
     logLevel: "info",
+    plugins: [importMetaResolvePlugin],
   });
   await mainContext.watch();
   esbuildContexts.push(mainContext);

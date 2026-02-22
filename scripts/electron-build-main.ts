@@ -300,6 +300,60 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  // Patch import_meta.resolve - esbuild transforms it incorrectly for CJS
+  console.log("🔧 Patching import.meta.resolve polyfill...");
+  const fs = await import("fs");
+  let content = fs.readFileSync(OUTPUT_FILE, "utf-8");
+
+  // Add polyfill for import_meta.resolve
+  const polyfill = `
+// Polyfill for import.meta.resolve - esbuild transforms it incorrectly for CJS
+const __path = require('path');
+const __url = require('url');
+function __importMetaResolve(specifier) {
+  try {
+    const resolved = require.resolve(specifier);
+    return __url.pathToFileURL(resolved).href;
+  } catch (e) {
+    if (specifier === '@github/copilot/sdk') {
+      const sdkPath = require.resolve('@github/copilot-sdk');
+      const indexPath = __path.join(__path.dirname(__path.dirname(sdkPath)), 'sdk', 'index.js');
+      return __url.pathToFileURL(indexPath).href;
+    }
+    throw e;
+  }
+}
+`;
+
+  // Find all import_meta variables and add resolve method
+  // Match both patterns: "var import_meta4 = {};" and "import_meta4 = {};"
+  const importMetaPattern = /(var\s+)?(import_meta\d+)\s*=\s*\{\};/g;
+  const importMetaVars: string[] = [];
+  let match;
+  while ((match = importMetaPattern.exec(content)) !== null) {
+    if (!importMetaVars.includes(match[2])) {
+      importMetaVars.push(match[2]);
+    }
+  }
+
+  if (importMetaVars.length > 0) {
+    // Add polyfill at the top
+    content = polyfill + content;
+
+    // Add resolve method to each import_meta variable
+    for (const varName of importMetaVars) {
+      content = content.replace(
+        new RegExp(`(var\\s+)?${varName}\\s*=\\s*\\{\\};`, 'g'),
+        `$1${varName} = { resolve: __importMetaResolve };`
+      );
+    }
+
+    fs.writeFileSync(OUTPUT_FILE, content);
+    console.log(`✅ Patched ${importMetaVars.length} import_meta variable(s)`);
+  } else {
+    console.log("✅ No import_meta variables found to patch");
+  }
+
   // Verify the output
   console.log("🔍 Verifying build output...");
   const verification = await verifyJsFile(OUTPUT_FILE);
