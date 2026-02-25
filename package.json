@@ -1,6 +1,6 @@
 {
   "name": "iweather-agent",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "iWeather - 智能 AI 助手，基于 Claude Agent SDK 的开源桌面应用",
   "type": "module",
   "private": true,
