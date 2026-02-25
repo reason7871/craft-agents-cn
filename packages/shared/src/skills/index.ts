@@ -18,3 +18,9 @@ export {
   skillNeedsIconDownload,
   downloadSkillIcon,
 } from './storage.ts';
+export {
+  loadBuiltinSkills,
+  loadBuiltinSkill,
+  listBuiltinSkillSlugs,
+  isBuiltinSkill,
+} from './builtin.ts';

@@ -111,7 +111,7 @@ export interface EditConfig {
 const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   'workspace-permissions': (location) => ({
     context: {
-      label: 'Permission Settings',
+      label: '权限设置',
       filePath: `${location}/permissions.json`,
       context:
         'The user is on the Settings Screen and pressed the edit button on Workspace Permission settings. ' +
@@ -129,7 +129,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
 
   'default-permissions': (location) => ({
     context: {
-      label: 'Default Permissions',
+      label: '默认权限',
       filePath: location, // location is the full path for default permissions
       context:
         'The user is editing app-level default permissions (~/.iweather/permissions/default.json). ' +
@@ -149,7 +149,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Skill editing contexts
   'skill-instructions': (location) => ({
     context: {
-      label: 'Skill Instructions',
+      label: '技能说明',
       filePath: `${location}/SKILL.md`,
       context:
         'The user is editing skill instructions in SKILL.md. ' +
@@ -167,7 +167,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
 
   'skill-metadata': (location) => ({
     context: {
-      label: 'Skill Metadata',
+      label: '技能元数据',
       filePath: `${location}/SKILL.md`,
       context:
         'The user is editing skill metadata in the YAML frontmatter of SKILL.md. ' +
@@ -185,7 +185,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Source editing contexts
   'source-guide': (location) => ({
     context: {
-      label: 'Source Documentation',
+      label: '来源文档',
       filePath: `${location}/guide.md`,
       context:
         'The user is editing source documentation (guide.md). ' +
@@ -201,7 +201,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
 
   'source-config': (location) => ({
     context: {
-      label: 'Source Configuration',
+      label: '来源配置',
       filePath: `${location}/config.json`,
       context:
         'The user is editing source configuration (config.json). ' +
@@ -218,7 +218,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
 
   'source-permissions': (location) => ({
     context: {
-      label: 'Source Permissions',
+      label: '来源权限',
       filePath: `${location}/permissions.json`,
       context:
         'The user is editing source-level permissions (permissions.json). ' +
@@ -235,7 +235,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
 
   'source-tool-permissions': (location) => ({
     context: {
-      label: 'Tool Permissions',
+      label: '工具权限',
       filePath: `${location}/permissions.json`,
       context:
         'The user is viewing the Tools list for an MCP source and wants to modify tool permissions. ' +
@@ -255,7 +255,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Preferences editing context
   'preferences-notes': (location) => ({
     context: {
-      label: 'Preferences Notes',
+      label: '偏好设置备注',
       filePath: location, // location is the full path for preferences
       context:
         'The user is editing the notes field in their preferences (~/.iweather/preferences.json). ' +
@@ -273,7 +273,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Add new source/skill contexts - use overridePlaceholder for inspiring, contextual prompts
   'add-source': (location) => ({
     context: {
-      label: 'Add Source',
+      label: '添加来源',
       filePath: `${location}/sources/`, // location is the workspace root path
       context:
         'The user wants to add a new source to their workspace. ' +
@@ -290,7 +290,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Filter-specific add-source contexts: user is viewing a filtered list and wants to add that type
   'add-source-api': (location) => ({
     context: {
-      label: 'Add API',
+      label: '添加 API',
       filePath: `${location}/sources/`,
       context:
         'The user is viewing API sources and wants to add a new REST API. ' +
@@ -307,7 +307,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
 
   'add-source-mcp': (location) => ({
     context: {
-      label: 'Add MCP Server',
+      label: '添加 MCP 服务器',
       filePath: `${location}/sources/`,
       context:
         'The user is viewing MCP sources and wants to add a new MCP server. ' +
@@ -324,7 +324,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
 
   'add-source-local': (location) => ({
     context: {
-      label: 'Add Local Folder',
+      label: '添加本地文件夹',
       filePath: `${location}/sources/`,
       context:
         'The user wants to add a local folder source. ' +
@@ -342,7 +342,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
 
   'add-skill': (location) => ({
     context: {
-      label: 'Add Skill',
+      label: '添加技能',
       filePath: `${location}/skills/`, // location is the workspace root path
       context:
         'The user wants to add a new skill to their workspace. ' +
@@ -359,7 +359,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Status configuration context
   'edit-statuses': (location) => ({
     context: {
-      label: 'Status Configuration',
+      label: '状态配置',
       filePath: `${location}/statuses/config.json`,
       context:
         'The user wants to customize session statuses (workflow states). ' +
@@ -379,7 +379,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Label configuration context
   'edit-labels': (location) => ({
     context: {
-      label: 'Label Configuration',
+      label: '标签配置',
       filePath: `${location}/labels/config.json`,
       context:
         'The user wants to customize session labels (tagging/categorization). ' +
@@ -400,7 +400,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Auto-label rules context (focused on regex patterns within labels)
   'edit-auto-rules': (location) => ({
     context: {
-      label: 'Auto-Apply Rules',
+      label: '自动应用规则',
       filePath: `${location}/labels/config.json`,
       context:
         'The user wants to edit auto-apply rules (regex patterns that auto-tag sessions). ' +
@@ -420,7 +420,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Add new label context (triggered from the # menu when no labels match)
   'add-label': (location) => ({
     context: {
-      label: 'Add Label',
+      label: '添加标签',
       filePath: `${location}/labels/config.json`,
       context:
         'The user wants to create a new label from the # inline menu. ' +
@@ -441,7 +441,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Views configuration context
   'edit-views': (location) => ({
     context: {
-      label: 'Views Configuration',
+      label: '视图配置',
       filePath: `${location}/views.json`,
       context:
         'The user wants to edit views (dynamic, expression-based filters). ' +
@@ -462,7 +462,7 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
   // Tool icons configuration context
   'edit-tool-icons': (location) => ({
     context: {
-      label: 'Tool Icons',
+      label: '工具图标',
       filePath: location, // location is the full path to tool-icons.json
       context:
         'The user wants to edit CLI tool icon mappings. ' +

@@ -31,3 +31,13 @@ try {
   // Only warn - PowerShell validation is optional on non-Windows platforms
   console.log('⚠ powershell-parser.ps1 copy skipped (not critical on non-Windows)');
 }
+
+// Copy builtin skills from packages/shared/src/skills/builtin to dist/skills/builtin
+const builtinSkillsSrc = join('..', '..', 'packages', 'shared', 'src', 'skills', 'builtin');
+const builtinSkillsDest = join('dist', 'skills', 'builtin');
+try {
+  cpSync(builtinSkillsSrc, builtinSkillsDest, { recursive: true });
+  console.log('✓ Copied builtin skills → dist/skills/builtin/');
+} catch (err) {
+  console.warn('⚠ Failed to copy builtin skills:', err);
+}

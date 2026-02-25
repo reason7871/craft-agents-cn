@@ -1,8 +1,9 @@
 /**
  * Tests for Skills Storage
  *
- * Verifies the three-tier skill loading system:
- * 1. Global skills: ~/.agents/skills/ (lowest priority)
+ * Verifies the four-tier skill loading system:
+ * 0. Builtin skills: bundled with application (lowest priority)
+ * 1. Global skills: ~/.agents/skills/
  * 2. Workspace skills: {workspaceRoot}/skills/ (medium priority)
  * 3. Project skills: {projectRoot}/.agents/skills/ (highest priority)
  *
@@ -10,7 +11,7 @@
  *
  * Note: The global skills directory (~/.agents/skills/) is a module-level constant
  * that cannot be mocked reliably when tests run in parallel with other test files.
- * The loadAllSkills tests account for any pre-existing global skills by capturing a
+ * The loadAllSkills tests account for any pre-existing global/builtin skills by capturing a
  * baseline count and validating relative to it.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
@@ -25,6 +26,12 @@ import {
   listSkillSlugs,
   deleteSkill,
 } from '../storage.ts';
+import {
+  loadBuiltinSkills,
+  loadBuiltinSkill,
+  listBuiltinSkillSlugs,
+  isBuiltinSkill,
+} from '../builtin.ts';
 
 // ============================================================
 // Temp Directory Setup
@@ -85,13 +92,13 @@ function createEmptySkillDir(skillsDir: string, slug: string): string {
   return skillDir;
 }
 
-/** Get the set of slugs currently in the real global skills directory */
+/** Get the set of slugs currently in the real global skills directory and builtin skills */
 function getExistingGlobalSlugs(): Set<string> {
   const emptyWs = mkdtempSync(join(tmpdir(), 'skills-baseline-'));
   mkdirSync(join(emptyWs, 'skills'), { recursive: true });
   try {
     const skills = loadAllSkills(emptyWs);
-    // These are all global skills since the workspace is empty
+    // These are all global/builtin skills since the workspace is empty
     return new Set(skills.map(s => s.slug));
   } finally {
     rmSync(emptyWs, { recursive: true, force: true });
@@ -325,7 +332,7 @@ describe('loadAllSkills', () => {
   // Use unique slugs that won't collide with real global skills
   const TEST_PREFIX = '_test_storage_';
 
-  it('should load workspace and project skills alongside any existing global skills', () => {
+  it('should load workspace and project skills alongside any existing global/builtin skills', () => {
     const baselineGlobal = getExistingGlobalSlugs();
     const wsDir = getWorkspaceSkillsDir();
     const projDir = getProjectSkillsDir();
@@ -336,7 +343,7 @@ describe('loadAllSkills', () => {
 
     const skills = loadAllSkills(workspaceRoot, projectRoot);
 
-    // Should have baseline global skills + our 2 test skills
+    // Should have baseline global/builtin skills + our 2 test skills
     expect(skills.length).toBe(baselineGlobal.size + 2);
 
     const wsSkill = skills.find(s => s.slug === `${TEST_PREFIX}ws`);
@@ -348,11 +355,11 @@ describe('loadAllSkills', () => {
     expect(projSkill).toBeDefined();
     expect(projSkill!.source).toBe('project');
 
-    // All baseline global skills should still be present with source 'global'
+    // All baseline global/builtin skills should still be present with source 'global' or 'builtin'
     for (const globalSlug of baselineGlobal) {
       const skill = skills.find(s => s.slug === globalSlug);
       expect(skill).toBeDefined();
-      expect(skill!.source).toBe('global');
+      expect(['global', 'builtin']).toContain(skill!.source);
     }
   });
 
@@ -471,15 +478,15 @@ describe('loadAllSkills', () => {
     expect(skills.length).toBe(baselineGlobal.size + 1);
   });
 
-  it('should return only global skills when workspace and project are empty', () => {
+  it('should return only global/builtin skills when workspace and project are empty', () => {
     const baselineGlobal = getExistingGlobalSlugs();
 
     const skills = loadAllSkills(workspaceRoot);
 
-    // With empty workspace and no project, only global skills remain
+    // With empty workspace and no project, only global/builtin skills remain
     expect(skills.length).toBe(baselineGlobal.size);
     for (const skill of skills) {
-      expect(skill.source).toBe('global');
+      expect(['global', 'builtin']).toContain(skill.source);
     }
   });
 
@@ -499,10 +506,10 @@ describe('loadAllSkills', () => {
     expect(testSkills.filter(s => s.source === 'workspace')).toHaveLength(2);
     expect(testSkills.filter(s => s.source === 'project')).toHaveLength(1);
 
-    // Global skills should all have source 'global'
+    // Global/builtin skills should have source 'global' or 'builtin'
     const globalSkills = skills.filter(s => !s.slug.startsWith(TEST_PREFIX));
     for (const skill of globalSkills) {
-      expect(skill.source).toBe('global');
+      expect(['global', 'builtin']).toContain(skill.source);
     }
   });
 
@@ -596,5 +603,112 @@ describe('deleteSkill', () => {
   it('should return false for non-existent skill', () => {
     const result = deleteSkill(workspaceRoot, 'nonexistent');
     expect(result).toBe(false);
+  });
+});
+
+// ============================================================
+// Tests: Builtin Skills
+// ============================================================
+
+describe('loadBuiltinSkills', () => {
+  it('should load all builtin skills', () => {
+    const skills = loadBuiltinSkills();
+
+    // Should have at least the predefined builtin skills
+    expect(skills.length).toBeGreaterThan(0);
+
+    // All should have source 'builtin'
+    for (const skill of skills) {
+      expect(skill.source).toBe('builtin');
+    }
+  });
+
+  it('should have correct metadata for builtin skills', () => {
+    const skills = loadBuiltinSkills();
+
+    for (const skill of skills) {
+      expect(skill.metadata.name).toBeDefined();
+      expect(skill.metadata.description).toBeDefined();
+      expect(skill.content.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('should include expected builtin skills', () => {
+    const slugs = listBuiltinSkillSlugs();
+
+    // Check for some of the builtin skills
+    expect(slugs).toContain('pdf');
+    expect(slugs).toContain('xlsx');
+    expect(slugs).toContain('pptx');
+    expect(slugs).toContain('mcp-builder');
+    expect(slugs).toContain('frontend-design');
+  });
+});
+
+describe('loadBuiltinSkill', () => {
+  it('should load a specific builtin skill by slug', () => {
+    const skill = loadBuiltinSkill('pdf');
+
+    expect(skill).not.toBeNull();
+    expect(skill!.slug).toBe('pdf');
+    expect(skill!.source).toBe('builtin');
+  });
+
+  it('should return null for non-existent builtin skill', () => {
+    const skill = loadBuiltinSkill('nonexistent-builtin');
+    expect(skill).toBeNull();
+  });
+});
+
+describe('isBuiltinSkill', () => {
+  it('should return true for existing builtin skills', () => {
+    expect(isBuiltinSkill('pdf')).toBe(true);
+    expect(isBuiltinSkill('xlsx')).toBe(true);
+  });
+
+  it('should return false for non-existent skills', () => {
+    expect(isBuiltinSkill('nonexistent')).toBe(false);
+  });
+});
+
+describe('loadAllSkills with builtin', () => {
+  it('should include builtin skills in loadAllSkills', () => {
+    const skills = loadAllSkills(workspaceRoot);
+
+    // Builtin skills should be included
+    const pdfSkill = skills.find(s => s.slug === 'pdf');
+    expect(pdfSkill).toBeDefined();
+    expect(pdfSkill!.source).toBe('builtin');
+  });
+
+  it('should allow workspace skill to override builtin skill', () => {
+    const wsDir = join(workspaceRoot, 'skills');
+    createSkill(wsDir, 'pdf', {
+      name: 'Custom PDF Helper',
+      description: 'Overrides the builtin',
+    });
+
+    const skills = loadAllSkills(workspaceRoot);
+    const pdfSkill = skills.find(s => s.slug === 'pdf');
+
+    expect(pdfSkill).toBeDefined();
+    expect(pdfSkill!.source).toBe('workspace');
+    expect(pdfSkill!.metadata.name).toBe('Custom PDF Helper');
+  });
+
+  it('should allow project skill to override builtin skill', () => {
+    const projDir = join(projectRoot, '.agents', 'skills');
+    mkdirSync(projDir, { recursive: true });
+    createSkill(projDir, 'xlsx', {
+      name: 'Project XLSX',
+      description: 'Overrides the builtin',
+    });
+
+    const skills = loadAllSkills(workspaceRoot, projectRoot);
+    const xlsxSkill = skills.find(s => s.slug === 'xlsx');
+
+    expect(xlsxSkill).toBeDefined();
+    expect(xlsxSkill!.source).toBe('project');
+    expect(xlsxSkill!.metadata.name).toBe('Project XLSX');
   });
 });

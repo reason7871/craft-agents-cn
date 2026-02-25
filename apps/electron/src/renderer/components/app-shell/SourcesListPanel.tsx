@@ -55,7 +55,7 @@ function getSourceTypeFilterLabel(sourceType: 'api' | 'mcp' | 'local'): string {
     case 'mcp':
       return 'MCP'
     case 'local':
-      return 'local folder'
+      return '本地文件夹'
     default:
       return sourceType
   }
@@ -83,9 +83,9 @@ export function SourcesListPanel({
   // Build empty state message based on filter
   const emptyMessage = React.useMemo(() => {
     if (sourceFilter?.kind === 'type') {
-      return `No ${getSourceTypeFilterLabel(sourceFilter.sourceType)} sources configured.`
+      return `未配置${getSourceTypeFilterLabel(sourceFilter.sourceType)}来源`
     }
-    return 'No sources configured.'
+    return '未配置来源'
   }, [sourceFilter])
 
   // Empty state - rendered outside ScrollArea for proper vertical centering
@@ -98,7 +98,7 @@ export function SourcesListPanel({
           </EmptyMedia>
           <EmptyTitle>{emptyMessage}</EmptyTitle>
           <EmptyDescription>
-            Sources connect your agent to external data — MCP servers, REST APIs, and local folders.
+            来源可以将Agent连接到外部数据——MCP服务器、REST API和本地文件夹。
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -106,14 +106,14 @@ export function SourcesListPanel({
             onClick={() => window.electronAPI.openUrl(getDocUrl('sources'))}
             className="inline-flex items-center h-7 px-3 text-xs font-medium rounded-[8px] bg-foreground/[0.02] shadow-minimal hover:bg-foreground/[0.05] transition-colors"
           >
-            Learn more
+            了解更多
           </button>
           {workspaceRootPath && (
             <EditPopover
               align="center"
               trigger={
                 <button className="inline-flex items-center h-7 px-3 text-xs font-medium rounded-[8px] bg-background shadow-minimal hover:bg-foreground/[0.03] transition-colors">
-                  Add Source
+                  添加来源
                 </button>
               }
               {...getEditConfig(
@@ -167,7 +167,7 @@ function getSourceTypeLabel(type: string): string {
     case 'api':
       return 'API'
     case 'local':
-      return 'Local'
+      return '本地'
     default:
       return type
   }
@@ -198,13 +198,13 @@ function getStatusBadge(status: SourceConnectionStatus): { label: string; classe
     case 'connected':
       return null // No badge for connected sources
     case 'needs_auth':
-      return { label: 'Auth Required', classes: 'bg-warning/10 text-warning' }
+      return { label: '需要认证', classes: 'bg-warning/10 text-warning' }
     case 'failed':
-      return { label: 'Disconnected', classes: 'bg-destructive/10 text-destructive' }
+      return { label: '已断开', classes: 'bg-destructive/10 text-destructive' }
     case 'untested':
-      return { label: 'Not Tested', classes: 'bg-foreground/10 text-foreground/50' }
+      return { label: '未测试', classes: 'bg-foreground/10 text-foreground/50' }
     case 'local_disabled':
-      return { label: 'Disabled', classes: 'bg-foreground/10 text-foreground/50' }
+      return { label: '已禁用', classes: 'bg-foreground/10 text-foreground/50' }
     default:
       return null
   }
