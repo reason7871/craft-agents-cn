@@ -261,9 +261,9 @@ export function ApiKeyInput({
       {!isDefaultProviderPreset && (
         <div className="space-y-2">
           <Label htmlFor="connection-default-model" className="text-muted-foreground font-normal">
-            Default Model{' '}
+            默认模型{' '}
             <span className="text-foreground/30">
-              · {(!isDefaultProviderPreset && baseUrl.trim()) ? 'required' : 'optional'}
+              · {(!isDefaultProviderPreset && baseUrl.trim()) ? '必填' : '可选'}
             </span>
           </Label>
           <div className={cn(
@@ -279,7 +279,7 @@ export function ApiKeyInput({
                 setConnectionDefaultModel(e.target.value)
                 setModelError(null)
               }}
-              placeholder={providerType === 'openai' ? "e.g. openai/gpt-5.2-codex, openai/gpt-5.1-codex-mini" : "e.g. anthropic/claude-opus-4.6, anthropic/claude-haiku-4.5"}
+              placeholder={providerType === 'openai' ? "例如：openai/gpt-5.2-codex, openai/gpt-5.1-codex-mini" : "例如：anthropic/claude-opus-4.6, anthropic/claude-haiku-4.5"}
               className="border-0 bg-transparent shadow-none"
               disabled={isDisabled}
             />

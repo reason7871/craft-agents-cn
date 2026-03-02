@@ -50,7 +50,7 @@ export const meta: DetailsPageMeta = {
 const toolIconColumns: ColumnDef<ToolIconMapping>[] = [
   {
     accessorKey: 'iconDataUrl',
-    header: () => <span className="p-1.5 pl-2.5">Icon</span>,
+    header: () => <span className="p-1.5 pl-2.5">图标</span>,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
         <img
@@ -65,7 +65,7 @@ const toolIconColumns: ColumnDef<ToolIconMapping>[] = [
   },
   {
     accessorKey: 'displayName',
-    header: ({ column }) => <SortableHeader column={column} title="Tool" />,
+    header: ({ column }) => <SortableHeader column={column} title="工具" />,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5 font-medium">
         {row.original.displayName}
@@ -75,7 +75,7 @@ const toolIconColumns: ColumnDef<ToolIconMapping>[] = [
   },
   {
     accessorKey: 'commands',
-    header: () => <span className="p-1.5 pl-2.5">Commands</span>,
+    header: () => <span className="p-1.5 pl-2.5">命令</span>,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5 flex flex-wrap gap-1">
         {row.original.commands.map(cmd => (

@@ -108,7 +108,7 @@ export function WorkspaceSwitcher({
   const handleWorkspaceCreated = (workspace: Workspace) => {
     setShowCreationScreen(false)
     setFullscreenOverlayOpen(false)
-    toast.success(`Created workspace "${workspace.name}"`)
+    toast.success(`已创建工作区 "${workspace.name}"`)
     onWorkspaceCreated?.(workspace)
     onSelect(workspace.id)
   }
@@ -141,7 +141,7 @@ export function WorkspaceSwitcher({
             "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             isCollapsed && "h-9 w-9 shrink-0 justify-center p-0"
           )}
-          aria-label="Select workspace"
+          aria-label="选择工作区"
         >
           {/* Workspace Avatar: Image with crossfade, border, first letter fallback */}
           <CrossfadeAvatar
@@ -155,7 +155,7 @@ export function WorkspaceSwitcher({
           {!isCollapsed && (
             <>
               <FadingText className="ml-1 font-sans min-w-0 text-sm" fadeWidth={36}>
-                {selectedWorkspace?.name || 'Select workspace'}
+                {selectedWorkspace?.name || '选择工作区'}
               </FadingText>
               <ChevronDown className="h-3 w-3 opacity-50 shrink-0" />
             </>
@@ -196,7 +196,7 @@ export function WorkspaceSwitcher({
                     e.stopPropagation()
                     onSelect(workspace.id, true)
                   }}
-                  title="Open in new window"
+                  title="在新窗口中打开"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                 </button>
@@ -215,7 +215,7 @@ export function WorkspaceSwitcher({
           className="font-sans"
         >
           <FolderPlus className="h-4 w-4" />
-          Add Workspace...
+          添加工作区...
         </StyledDropdownMenuItem>
       </StyledDropdownMenuContent>
     </DropdownMenu>

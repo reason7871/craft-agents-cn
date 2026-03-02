@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Command as CommandPrimitive } from 'cmdk'
 import { Archive, ArchiveRestore } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import {
   type SessionStatusId,
@@ -11,6 +12,16 @@ import {
 
 // Re-export types for backwards compatibility
 export { type SessionStatusId, type SessionStatus, getStateIcon, getStateColor }
+
+// Map status ID to translation key
+const STATUS_TRANSLATION_KEYS: Record<string, string> = {
+  'backlog': 'statusBacklog',
+  'todo': 'statusTodo',
+  'needs-review': 'statusNeedsReview',
+  'done': 'statusDone',
+  'cancelled': 'statusCancelled',
+  'in-progress': 'statusInProgress',
+}
 
 // ============================================================================
 // Shared Styles (matching slash-command-menu)
@@ -24,10 +35,14 @@ const MENU_ITEM_STYLE = 'flex cursor-pointer select-none items-center gap-3 roun
 // StateItemContent - Shared item rendering
 // ============================================================================
 
-function StateItemContent({ state }: { state: SessionStatus }) {
+function StateItemContent({ state, t }: { state: SessionStatus; t: (key: string) => string }) {
   // Only apply color styling if the icon is colorable (uses currentColor)
   // Emojis and images should render at full opacity with their own colors
   const applyColor = state.iconColorable
+
+  // Get translated label
+  const translationKey = STATUS_TRANSLATION_KEYS[state.id]
+  const label = translationKey ? t(translationKey) : state.label
 
   return (
     <>
@@ -37,7 +52,7 @@ function StateItemContent({ state }: { state: SessionStatus }) {
       >
         {state.icon}
       </span>
-      <div className="flex-1 min-w-0">{state.label}</div>
+      <div className="flex-1 min-w-0">{label}</div>
     </>
   )
 }
@@ -70,6 +85,7 @@ export function SessionStatusMenu({
 }: SessionStatusMenuProps) {
   const [filter, setFilter] = React.useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const { t } = useTranslation('sessions')
 
   // Focus input when menu opens
   React.useEffect(() => {
@@ -92,20 +108,22 @@ export function SessionStatusMenu({
           ref={inputRef}
           value={filter}
           onValueChange={setFilter}
-          placeholder="Filter statuses..."
+          placeholder={t('filterStatuses') || '筛选状态...'}
           className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
         />
       </div>
       <CommandPrimitive.List className={MENU_LIST_STYLE}>
         <CommandPrimitive.Empty className="py-3 text-center text-sm text-muted-foreground">
-          No status found
+          {t('noStatusFound') || '未找到状态'}
         </CommandPrimitive.Empty>
         {states.map((state) => {
           const isActive = activeState === state.id
+          const translationKey = STATUS_TRANSLATION_KEYS[state.id]
+          const label = translationKey ? t(translationKey) : state.label
           return (
             <CommandPrimitive.Item
               key={state.id}
-              value={state.label}
+              value={label}
               onSelect={() => onSelect(state.id)}
               className={cn(
                 MENU_ITEM_STYLE,
@@ -113,7 +131,7 @@ export function SessionStatusMenu({
                 isActive ? 'bg-foreground/7' : 'data-[selected=true]:bg-foreground/3'
               )}
             >
-              <StateItemContent state={state} />
+              <StateItemContent state={state} t={t} />
             </CommandPrimitive.Item>
           )
         })}
@@ -133,7 +151,7 @@ export function SessionStatusMenu({
               <span className="shrink-0 flex items-center opacity-60">
                 {isArchived ? <ArchiveRestore className="w-3.5 h-3.5" /> : <Archive className="w-3.5 h-3.5" />}
               </span>
-              <div className="flex-1 min-w-0">{isArchived ? 'Unarchive' : 'Archive'}</div>
+              <div className="flex-1 min-w-0">{isArchived ? t('unarchive') : t('archive')}</div>
             </CommandPrimitive.Item>
           </>
         )}

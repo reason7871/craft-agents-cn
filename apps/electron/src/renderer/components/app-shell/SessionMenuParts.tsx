@@ -1,10 +1,35 @@
 import * as React from 'react'
 import { Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { MenuComponents } from '@/components/ui/menu-context'
 import type { SessionStatusId } from '@/config/session-status-config'
 import type { SessionStatus } from '@/config/session-status-config'
 import type { LabelConfig } from '@iweather/shared/labels'
 import { LabelIcon } from '@/components/ui/label-icon'
+
+// Map status ID to translation key
+const STATUS_TRANSLATION_KEYS: Record<string, string> = {
+  'backlog': 'statusBacklog',
+  'todo': 'statusTodo',
+  'needs-review': 'statusNeedsReview',
+  'done': 'statusDone',
+  'cancelled': 'statusCancelled',
+  'in-progress': 'statusInProgress',
+}
+
+// Map label ID to translation key
+const LABEL_TRANSLATION_KEYS: Record<string, string> = {
+  'development': 'labelDevelopment',
+  'code': 'labelCode',
+  'bug': 'labelBug',
+  'automation': 'labelAutomation',
+  'content': 'labelContent',
+  'writing': 'labelWriting',
+  'research': 'labelResearch',
+  'design': 'labelDesign',
+  'priority': 'labelPriority',
+  'project': 'labelProject',
+}
 
 export interface StatusMenuItemsProps {
   sessionStatuses: SessionStatus[]
@@ -20,6 +45,13 @@ export function StatusMenuItems({
   menu,
 }: StatusMenuItemsProps) {
   const { MenuItem } = menu
+  const { t } = useTranslation('sessions')
+
+  // Get translated label for a status
+  const getTranslatedLabel = (state: SessionStatus): string => {
+    const translationKey = STATUS_TRANSLATION_KEYS[state.id]
+    return translationKey ? t(translationKey) : state.label
+  }
 
   return (
     <>
@@ -37,7 +69,7 @@ export function StatusMenuItems({
             <span style={applyColor ? { color: state.resolvedColor } : undefined}>
               {bareIcon}
             </span>
-            <span className="flex-1">{state.label}</span>
+            <span className="flex-1">{getTranslatedLabel(state)}</span>
           </MenuItem>
         )
       })}
@@ -82,6 +114,13 @@ export function LabelMenuItems({
   menu,
 }: LabelMenuItemsProps) {
   const { MenuItem, Separator, Sub, SubTrigger, SubContent } = menu
+  const { t } = useTranslation('sessions')
+
+  // Get translated name for a label
+  const getTranslatedName = (label: LabelConfig): string => {
+    const translationKey = LABEL_TRANSLATION_KEYS[label.id]
+    return translationKey ? t(translationKey) : label.name
+  }
 
   return (
     <>
@@ -96,7 +135,7 @@ export function LabelMenuItems({
             <Sub key={label.id}>
               <SubTrigger className="pr-2">
                 <LabelIcon label={label} size="sm" hasChildren />
-                <span className="flex-1">{label.name}</span>
+                <span className="flex-1">{getTranslatedName(label)}</span>
                 {subtreeCount > 0 && (
                   <span className="text-[10px] text-foreground/50 tabular-nums -mr-2.5">
                     {subtreeCount}
@@ -111,7 +150,7 @@ export function LabelMenuItems({
                   }}
                 >
                   <LabelIcon label={label} size="sm" hasChildren />
-                  <span className="flex-1">{label.name}</span>
+                  <span className="flex-1">{getTranslatedName(label)}</span>
                   <span className="w-3.5 ml-4">
                     {isApplied && <Check className="h-3.5 w-3.5 text-foreground" />}
                   </span>
@@ -137,7 +176,7 @@ export function LabelMenuItems({
             }}
           >
             <LabelIcon label={label} size="sm" />
-            <span className="flex-1">{label.name}</span>
+            <span className="flex-1">{getTranslatedName(label)}</span>
             <span className="w-3.5 ml-4">
               {isApplied && <Check className="h-3.5 w-3.5 text-foreground" />}
             </span>

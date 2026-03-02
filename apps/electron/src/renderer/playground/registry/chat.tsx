@@ -491,7 +491,7 @@ function ActiveTasksBarContext({ tasks = sampleBackgroundTasks }: ActiveTasksBar
 
         {/* Real InputContainer */}
         <InputContainer
-          placeholder="Message Craft Agent..."
+          placeholder="向 iWeather 发送消息..."
           disabled={false}
           isProcessing={false}
           currentModel="claude-sonnet-4-5-20250929"

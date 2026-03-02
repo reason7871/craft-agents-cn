@@ -96,7 +96,7 @@ function ActionShortcutRow({ actionId }: { actionId: ActionId }) {
 export default function ShortcutsPage() {
   return (
     <div className="h-full flex flex-col">
-      <PanelHeader title="Shortcuts" actions={<HeaderMenu route={routes.view.settings('shortcuts')} />} />
+      <PanelHeader title="快捷键" actions={<HeaderMenu route={routes.view.settings('shortcuts')} />} />
       <Separator />
       <ScrollArea className="flex-1">
         <div className="px-5 py-4">

@@ -504,7 +504,7 @@ function SessionItem({
                 role="button"
                 aria-haspopup="menu"
                 aria-expanded={todoMenuOpen}
-                aria-label="Change todo state"
+                aria-label="更改待办状态"
                 onContextMenu={(e) => {
                   e.preventDefault()
                   e.stopPropagation()

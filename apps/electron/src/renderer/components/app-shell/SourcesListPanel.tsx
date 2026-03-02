@@ -102,12 +102,14 @@ export function SourcesListPanel({
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
+          {/*
           <button
             onClick={() => window.electronAPI.openUrl(getDocUrl('sources'))}
             className="inline-flex items-center h-7 px-3 text-xs font-medium rounded-[8px] bg-foreground/[0.02] shadow-minimal hover:bg-foreground/[0.05] transition-colors"
           >
             了解更多
           </button>
+          */}
           {workspaceRootPath && (
             <EditPopover
               align="center"

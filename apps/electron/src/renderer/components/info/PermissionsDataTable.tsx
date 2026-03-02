@@ -87,7 +87,7 @@ function PatternBadge({ pattern }: { pattern: string }) {
 const columnsWithType: ColumnDef<PermissionRow>[] = [
   {
     accessorKey: 'access',
-    header: ({ column }) => <SortableHeader column={column} title="Access" />,
+    header: ({ column }) => <SortableHeader column={column} title="访问" />,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
         <Info_StatusBadge status={row.original.access} className="whitespace-nowrap" />
@@ -97,7 +97,7 @@ const columnsWithType: ColumnDef<PermissionRow>[] = [
   },
   {
     accessorKey: 'type',
-    header: ({ column }) => <SortableHeader column={column} title="Type" />,
+    header: ({ column }) => <SortableHeader column={column} title="类型" />,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
         <Info_Badge color="muted" className="capitalize whitespace-nowrap">
@@ -109,7 +109,7 @@ const columnsWithType: ColumnDef<PermissionRow>[] = [
   },
   {
     accessorKey: 'pattern',
-    header: ({ column }) => <SortableHeader column={column} title="Pattern" />,
+    header: ({ column }) => <SortableHeader column={column} title="模式" />,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
         <PatternBadge pattern={row.original.pattern} />
@@ -120,7 +120,7 @@ const columnsWithType: ColumnDef<PermissionRow>[] = [
   {
     id: 'comment',
     accessorKey: 'comment',
-    header: () => <span className="p-1.5 pl-2.5">Comment</span>,
+    header: () => <span className="p-1.5 pl-2.5">备注</span>,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5 min-w-0">
         <span className="truncate block">
@@ -192,7 +192,7 @@ export function PermissionsDataTable({
         'text-muted-foreground/50 hover:text-foreground',
         'focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:opacity-100'
       )}
-      title="View Fullscreen"
+      title="全屏查看"
     >
       <Maximize2 className="w-3.5 h-3.5" />
     </button>

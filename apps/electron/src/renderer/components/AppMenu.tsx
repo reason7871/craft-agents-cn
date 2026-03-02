@@ -201,7 +201,7 @@ export function AppMenu({
       <div className="pointer-events-auto titlebar-no-drag">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <TopBarButton aria-label="Craft menu">
+          <TopBarButton aria-label="iWeather 菜单">
             <CraftAgentsSymbol className="h-4 text-accent" />
           </TopBarButton>
         </DropdownMenuTrigger>
@@ -330,12 +330,12 @@ export function AppMenu({
             <TopBarButton
               onClick={onBack}
               disabled={!canGoBack}
-              aria-label="Go back"
+              aria-label="后退"
             >
               <Icons.ChevronLeft className="h-[22px] w-[22px] text-foreground/70" strokeWidth={1.5} />
             </TopBarButton>
           </TooltipTrigger>
-          <TooltipContent side="bottom">Back {goBackHotkey}</TooltipContent>
+          <TooltipContent side="bottom">后退 {goBackHotkey}</TooltipContent>
         </Tooltip>
 
         {/* Forward Navigation */}
@@ -344,12 +344,12 @@ export function AppMenu({
             <TopBarButton
               onClick={onForward}
               disabled={!canGoForward}
-              aria-label="Go forward"
+              aria-label="前进"
             >
               <Icons.ChevronRight className="h-[22px] w-[22px] text-foreground/70" strokeWidth={1.5} />
             </TopBarButton>
           </TooltipTrigger>
-          <TooltipContent side="bottom">Forward {goForwardHotkey}</TooltipContent>
+          <TooltipContent side="bottom">前进 {goForwardHotkey}</TooltipContent>
         </Tooltip>
       </div>
     </div>

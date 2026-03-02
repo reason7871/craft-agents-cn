@@ -61,7 +61,7 @@ export function Info_Markdown({
               'text-muted-foreground/50 hover:text-foreground',
               'focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:opacity-100'
             )}
-            title="View Fullscreen"
+            title="全屏查看"
           >
             <Maximize2 className="w-3.5 h-3.5" />
           </button>

@@ -24,7 +24,6 @@ import {
   Inbox,
   Globe,
   FolderOpen,
-  HelpCircle,
   ExternalLink,
   Cake,
 } from "lucide-react"
@@ -1451,7 +1450,7 @@ function AppShellContent({
         <HeaderIconButton
           icon={<PanelRightRounded className="h-5 w-6" />}
           onClick={() => setIsRightSidebarVisible(true)}
-          tooltip="Open sidebar"
+          tooltip="打开侧边栏"
           className="text-foreground"
         />
       </motion.div>
@@ -1466,7 +1465,7 @@ function AppShellContent({
       <HeaderIconButton
         icon={<PanelLeftRounded className="h-5 w-6" />}
         onClick={() => setIsRightSidebarVisible(false)}
-        tooltip="Close sidebar"
+        tooltip="关闭侧边栏"
         className="text-foreground"
       />
     )
@@ -2294,19 +2293,19 @@ function AppShellContent({
                       variant: isSettingsNavigation(navState) ? "default" : "ghost",
                       onClick: () => handleSettingsClick('app'),
                     },
-                    // --- What's New ---
-                    {
-                      id: "nav:whats-new",
-                      title: t('whatsNew'),
-                      icon: hasUnseenReleaseNotes ? (
-                        <span className="relative">
-                          <Cake className="h-3.5 w-3.5" />
-                          <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-accent" />
-                        </span>
-                      ) : Cake,
-                      variant: "ghost" as const,
-                      onClick: handleWhatsNewClick,
-                    },
+                    // --- 新功能 (已隐藏) ---
+                    // {
+                    //   id: "nav:whats-new",
+                    //   title: t('whatsNew'),
+                    //   icon: hasUnseenReleaseNotes ? (
+                    //     <span className="relative">
+                    //       <Cake className="h-3.5 w-3.5" />
+                    //       <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-accent" />
+                    //     </span>
+                    //   ) : Cake,
+                    //   variant: "ghost" as const,
+                    //   onClick: handleWhatsNewClick,
+                    // },
                   ]}
                 />
                 {/* Agent Tree: Hierarchical list of agents */}
@@ -2327,48 +2326,7 @@ function AppShellContent({
                       onWorkspaceCreated={() => onRefreshWorkspaces?.()}
                     />
                   </div>
-                  {/* Help button - icon only with tooltip */}
-                  <DropdownMenu>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            className="flex items-center justify-center h-7 w-7 rounded-[6px] select-none outline-none hover:bg-foreground/5 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring"
-                          >
-                            <HelpCircle className="h-4 w-4 text-foreground/60" />
-                          </button>
-                        </DropdownMenuTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Help & Documentation</TooltipContent>
-                    </Tooltip>
-                    <StyledDropdownMenuContent align="end" side="top" sideOffset={8}>
-                      <StyledDropdownMenuItem onClick={() => window.electronAPI.openUrl(getDocUrl('sources'))}>
-                        <DatabaseZap className="h-3.5 w-3.5" />
-                        <span className="flex-1">Sources</span>
-                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                      </StyledDropdownMenuItem>
-                      <StyledDropdownMenuItem onClick={() => window.electronAPI.openUrl(getDocUrl('skills'))}>
-                        <Zap className="h-3.5 w-3.5" />
-                        <span className="flex-1">Skills</span>
-                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                      </StyledDropdownMenuItem>
-                      <StyledDropdownMenuItem onClick={() => window.electronAPI.openUrl(getDocUrl('statuses'))}>
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span className="flex-1">Statuses</span>
-                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                      </StyledDropdownMenuItem>
-                      <StyledDropdownMenuItem onClick={() => window.electronAPI.openUrl(getDocUrl('permissions'))}>
-                        <Settings className="h-3.5 w-3.5" />
-                        <span className="flex-1">Permissions</span>
-                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                      </StyledDropdownMenuItem>
-                      <StyledDropdownMenuSeparator />
-                      <StyledDropdownMenuItem onClick={() => window.electronAPI.openUrl('https://agents.craft.do/docs')}>
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        <span className="flex-1">All Documentation</span>
-                      </StyledDropdownMenuItem>
-                    </StyledDropdownMenuContent>
-                  </DropdownMenu>
+                  {/* Help button hidden */}
                 </div>
               </div>
             </div>
@@ -2539,7 +2497,7 @@ function AppShellContent({
                                   }
                                 }
                               }}
-                              placeholder="Search statuses & labels..."
+                              placeholder="搜索状态和标签..."
                               className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
                               autoFocus
                             />
@@ -2559,7 +2517,7 @@ function AppShellContent({
                                   <StyledDropdownMenuItem disabled>
                                     <FilterMenuRow
                                       icon={<Flag className="h-3.5 w-3.5" />}
-                                      label="Flagged"
+                                      label="已标记"
                                       accessory={<Check className="h-3 w-3 text-muted-foreground" />}
                                     />
                                   </StyledDropdownMenuItem>
@@ -2670,7 +2628,7 @@ function AppShellContent({
                             <DropdownMenuSub>
                               <StyledDropdownMenuSubTrigger>
                                 <Inbox className="h-3.5 w-3.5" />
-                                <span className="flex-1">Statuses</span>
+                                <span className="flex-1">状态</span>
                               </StyledDropdownMenuSubTrigger>
                               <StyledDropdownMenuSubContent minWidth="min-w-[180px]">
                                 {effectiveSessionStatuses.map(state => {
@@ -2743,12 +2701,12 @@ function AppShellContent({
                             <DropdownMenuSub>
                               <StyledDropdownMenuSubTrigger>
                                 <Tag className="h-3.5 w-3.5" />
-                                <span className="flex-1">Labels</span>
+                                <span className="flex-1">标签</span>
                               </StyledDropdownMenuSubTrigger>
                               <StyledDropdownMenuSubContent minWidth="min-w-[180px]">
                                 {labelConfigs.length === 0 ? (
                                   <StyledDropdownMenuItem disabled>
-                                    <span className="text-muted-foreground">No labels configured</span>
+                                    <span className="text-muted-foreground">未配置标签</span>
                                   </StyledDropdownMenuItem>
                                 ) : (
                                   <FilterLabelItems
@@ -2769,7 +2727,7 @@ function AppShellContent({
                               }}
                             >
                               <Search className="h-3.5 w-3.5" />
-                              <span className="flex-1">Search</span>
+                              <span className="flex-1">搜索</span>
                             </StyledDropdownMenuItem>
                           </>
                         ) : (
@@ -2780,7 +2738,7 @@ function AppShellContent({
                                 Supports keyboard navigation (ArrowUp/Down/Enter in input). */}
                             {filterDropdownResults.states.length === 0 && filterDropdownResults.labels.length === 0 ? (
                               <div className="px-3 py-4 text-center text-xs text-muted-foreground">
-                                No matching statuses or labels
+                                没有匹配的状态或标签
                               </div>
                             ) : (
                               <div ref={filterDropdownListRef} className="max-h-[240px] overflow-y-auto py-1">
@@ -2788,7 +2746,7 @@ function AppShellContent({
                                 {filterDropdownResults.states.length > 0 && (
                                   <>
                                     <div className="px-3 pt-1.5 pb-1 text-[11px] font-medium text-muted-foreground/60 uppercase tracking-wider">
-                                      Statuses
+                                      状态
                                     </div>
                                     {filterDropdownResults.states.map((state, index) => {
                                       const applyColor = state.iconColorable
@@ -2876,7 +2834,7 @@ function AppShellContent({
                                 {filterDropdownResults.labels.length > 0 && (
                                   <>
                                     <div className="px-3 pt-1.5 pb-1 text-[11px] font-medium text-muted-foreground/60 uppercase tracking-wider">
-                                      Labels
+                                      标签
                                     </div>
                                     {filterDropdownResults.labels.map((item, index) => {
                                       // Offset by state count for unified index
@@ -2969,7 +2927,7 @@ function AppShellContent({
                       trigger={
                         <HeaderIconButton
                           icon={<Plus className="h-4 w-4" />}
-                          tooltip="Add Source"
+                          tooltip="添加来源"
                           data-tutorial="add-source-button"
                         />
                       }

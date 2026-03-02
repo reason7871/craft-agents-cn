@@ -57,7 +57,7 @@ export function OAuthConnect({
     return (
       <form id={formId} onSubmit={handleAuthCodeSubmit}>
         <div className="space-y-2">
-          <Label htmlFor="auth-code">Authorization Code</Label>
+          <Label htmlFor="auth-code">授权码</Label>
           <div className={cn(
             "relative rounded-md shadow-minimal transition-colors",
             "bg-foreground-2 focus-within:bg-background"
@@ -67,7 +67,7 @@ export function OAuthConnect({
               type="text"
               value={authCode}
               onChange={(e) => setAuthCode(e.target.value)}
-              placeholder="Paste your authorization code here"
+              placeholder="在此粘贴您的授权码"
               className={cn(
                 "border-0 bg-transparent shadow-none font-mono text-sm",
                 status === 'error' && "focus-visible:ring-destructive"

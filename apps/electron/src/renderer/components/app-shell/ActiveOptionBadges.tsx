@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { SlashCommandMenu, DEFAULT_SLASH_COMMAND_GROUPS, type SlashCommandId } from '@/components/ui/slash-command-menu'
@@ -15,6 +16,13 @@ import { useDynamicStack } from '@/hooks/useDynamicStack'
 import type { SessionStatus } from '@/config/session-status-config'
 import { getState } from '@/config/session-status-config'
 import { SessionStatusMenu } from '@/components/ui/session-status-menu'
+
+// Translation keys for modes
+const MODE_DISPLAY_NAME_KEYS: Record<PermissionMode, string> = {
+  'safe': 'modeExplore',
+  'ask': 'modeAsk',
+  'allow-all': 'modeExecute',
+}
 
 // ============================================================================
 // Permission Mode Icon Component
@@ -425,6 +433,13 @@ function PermissionModeDropdown({ permissionMode, ultrathinkEnabled = false, onP
   const [open, setOpen] = React.useState(false)
   // Optimistic local state - updates immediately, syncs with prop
   const [optimisticMode, setOptimisticMode] = React.useState(permissionMode)
+  const { t } = useTranslation('common')
+
+  // Get translated display name for mode
+  const getModeDisplayName = (mode: PermissionMode): string => {
+    const translationKey = MODE_DISPLAY_NAME_KEYS[mode]
+    return t(translationKey) || PERMISSION_MODE_CONFIG[mode].displayName
+  }
 
   // Sync optimistic state when prop changes (confirmation from backend)
   React.useEffect(() => {
@@ -485,7 +500,7 @@ function PermissionModeDropdown({ permissionMode, ultrathinkEnabled = false, onP
           style={{ '--shadow-color': currentStyle.shadowVar } as React.CSSProperties}
         >
           <PermissionModeIcon mode={optimisticMode} className="h-3.5 w-3.5" />
-          <span>{config.displayName}</span>
+          <span>{getModeDisplayName(optimisticMode)}</span>
           <ChevronDown className="h-3.5 w-3.5 opacity-60" />
         </button>
       </PopoverTrigger>

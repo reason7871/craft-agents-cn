@@ -54,17 +54,19 @@ export function HeaderMenu({ route, children, helpFeature }: HeaderMenuProps) {
         {children && <StyledDropdownMenuSeparator />}
         <StyledDropdownMenuItem onClick={handleOpenInNewWindow}>
           <AppWindow className="h-3.5 w-3.5" />
-          <span className="flex-1">Open in New Window</span>
+          <span className="flex-1">在新窗口中打开</span>
         </StyledDropdownMenuItem>
+        {/* 隐藏"了解更多"链接
         {helpFeature && (
           <>
             <StyledDropdownMenuSeparator />
             <StyledDropdownMenuItem onClick={handleLearnMore}>
               <ExternalLink className="h-3.5 w-3.5" />
-              <span className="flex-1">Learn More</span>
+              <span className="flex-1">了解更多</span>
             </StyledDropdownMenuItem>
           </>
         )}
+        */}
       </StyledDropdownMenuContent>
     </DropdownMenu>
   )

@@ -181,7 +181,7 @@ function SlashCommandDemo() {
             ref={textareaRef}
             value={inputValue}
             onChange={handleInputChange}
-            placeholder="Type / to see commands..."
+            placeholder="输入 / 查看命令..."
             className="w-full min-h-[80px] px-4 py-3 text-sm bg-transparent outline-none resize-none"
             rows={3}
           />

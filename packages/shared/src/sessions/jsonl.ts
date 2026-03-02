@@ -142,8 +142,8 @@ export function writeSessionJsonl(sessionFile: string, session: StoredSession): 
 export function createSessionHeader(session: StoredSession): SessionHeader {
   return {
     ...pickSessionFields(session),
-    // Path conversion for portability
-    workspaceRootPath: toPortablePath(session.workspaceRootPath),
+    // Path conversion for portability - expand first to ensure absolute path
+    workspaceRootPath: toPortablePath(expandPath(session.workspaceRootPath)),
     // Override lastUsedAt with current timestamp (save time, not original)
     lastUsedAt: Date.now(),
     // Pre-computed fields

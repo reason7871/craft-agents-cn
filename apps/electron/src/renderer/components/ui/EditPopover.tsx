@@ -22,9 +22,9 @@ import { ChatDisplay } from '../app-shell/ChatDisplay'
 
 /** Rotating placeholders for compact mode input - short, action-oriented */
 const COMPACT_PLACEHOLDERS = [
-  'Just tell me what to change',
-  'Describe the update',
-  'What should I modify?',
+  '告诉我需要修改什么',
+  '描述一下更新内容',
+  '需要修改什么？',
 ]
 
 /**
@@ -283,8 +283,8 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
         'Follow the patterns in ~/.iweather/docs/sources.md. ' +
         'After creating the source, call source_test with the source slug to verify the configuration.',
     },
-    example: 'Connect to my Craft space',
-    overridePlaceholder: 'What would you like to connect?',
+    example: '连接到我的 Craft 空间',
+    overridePlaceholder: '您想连接什么？',
   }),
 
   // Filter-specific add-source contexts: user is viewing a filtered list and wants to add that type
@@ -301,8 +301,8 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
         'Follow the patterns in ~/.iweather/docs/sources.md. ' +
         'After creating the source, call source_test with the source slug to verify the configuration.',
     },
-    example: 'Connect to the OpenAI API',
-    overridePlaceholder: 'What API would you like to connect?',
+    example: '连接到 OpenAI API',
+    overridePlaceholder: '您想连接哪个 API？',
   }),
 
   'add-source-mcp': (location) => ({
@@ -318,8 +318,8 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
         'Follow the patterns in ~/.iweather/docs/sources.md. ' +
         'After creating the source, call source_test with the source slug to verify the configuration.',
     },
-    example: 'Connect to Linear',
-    overridePlaceholder: 'What MCP server would you like to connect?',
+    example: '连接到 Linear',
+    overridePlaceholder: '您想连接哪个 MCP 服务器？',
   }),
 
   'add-source-local': (location) => ({
@@ -336,8 +336,8 @@ const EDIT_CONFIGS: Record<EditContextKey, (location: string) => EditConfig> = {
         'Follow the patterns in ~/.iweather/docs/sources.md. ' +
         'After creating the source, call source_test with the source slug to verify the configuration.',
     },
-    example: 'Connect to my Obsidian vault',
-    overridePlaceholder: 'What folder would you like to connect?',
+    example: '连接到我的 Obsidian 库',
+    overridePlaceholder: '您想连接哪个文件夹？',
   }),
 
   'add-skill': (location) => ({
@@ -651,7 +651,7 @@ export function EditPopover({
   const placeholder = inlineExecution
     ? COMPACT_PLACEHOLDERS
     : (() => {
-        const basePlaceholder = overridePlaceholder ?? "Describe what you'd like to change..."
+        const basePlaceholder = overridePlaceholder ?? "描述一下您想修改什么..."
         return example
           ? `${basePlaceholder.replace(/\.{3}$/, '')}, e.g., "${example}"`
           : basePlaceholder
@@ -1012,7 +1012,7 @@ export const EditButton = React.forwardRef<
       className={cn("h-8 px-3 rounded-[6px] bg-background shadow-minimal text-foreground/70 hover:text-foreground", className)}
       {...props}
     >
-      Edit
+      编辑
     </Button>
   )
 })

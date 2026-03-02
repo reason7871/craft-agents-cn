@@ -87,7 +87,7 @@ function PatternBadge({ pattern }: { pattern: string }) {
 const columns: ColumnDef<AutoRuleRow>[] = [
   {
     id: 'label',
-    header: ({ column }) => <SortableHeader column={column} title="Label" />,
+    header: ({ column }) => <SortableHeader column={column} title="标签" />,
     accessorFn: (row) => row.label.name,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5 flex items-center gap-1.5">
@@ -99,7 +99,7 @@ const columns: ColumnDef<AutoRuleRow>[] = [
   },
   {
     id: 'pattern',
-    header: ({ column }) => <SortableHeader column={column} title="Pattern" />,
+    header: ({ column }) => <SortableHeader column={column} title="模式" />,
     accessorFn: (row) => row.rule.pattern,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
@@ -110,7 +110,7 @@ const columns: ColumnDef<AutoRuleRow>[] = [
   },
   {
     id: 'flags',
-    header: () => <span className="p-1.5 pl-2.5">Flags</span>,
+    header: () => <span className="p-1.5 pl-2.5">标志</span>,
     accessorFn: (row) => row.rule.flags ?? 'gi',
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
@@ -202,7 +202,7 @@ export function AutoRulesDataTable({
         'text-muted-foreground/50 hover:text-foreground',
         'focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:opacity-100'
       )}
-      title="View Fullscreen"
+      title="全屏查看"
     >
       <Maximize2 className="w-3.5 h-3.5" />
     </button>

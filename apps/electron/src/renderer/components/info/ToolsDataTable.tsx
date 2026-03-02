@@ -33,7 +33,7 @@ interface ToolsDataTableProps {
 const columns: ColumnDef<ToolRow>[] = [
   {
     accessorKey: 'permission',
-    header: ({ column }) => <SortableHeader column={column} title="Access" />,
+    header: ({ column }) => <SortableHeader column={column} title="访问" />,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
         <Info_StatusBadge status={row.original.permission} className="whitespace-nowrap" />
@@ -43,7 +43,7 @@ const columns: ColumnDef<ToolRow>[] = [
   },
   {
     accessorKey: 'name',
-    header: ({ column }) => <SortableHeader column={column} title="Tool" />,
+    header: ({ column }) => <SortableHeader column={column} title="工具" />,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
         <Info_Badge color="muted" className="whitespace-nowrap">

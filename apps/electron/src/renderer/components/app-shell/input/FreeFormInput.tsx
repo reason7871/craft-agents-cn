@@ -1454,7 +1454,7 @@ export function FreeFormInput({
             hasSelection={attachments.length > 0}
             showChevron={false}
             onClick={handleAttachClick}
-            tooltip="Attach files"
+            tooltip="附加文件"
             disabled={disabled}
           />
 
@@ -1549,9 +1549,9 @@ export function FreeFormInput({
                   >
                     {sources.length === 0 ? (
                       <div className="text-xs text-muted-foreground p-3 select-none">
-                        No sources configured.
+                        未配置来源。
                         <br />
-                        Add sources in Settings.
+                        请在设置中添加来源。
                       </div>
                     ) : (
                       <CommandPrimitive

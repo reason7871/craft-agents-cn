@@ -48,5 +48,19 @@
   "errorLoadingContent": "Error loading content",
   "searchSources": "Search sources...",
   "filterFolders": "Filter folders...",
-  "notAuthenticated": "Not authenticated"
+  "notAuthenticated": "Not authenticated",
+  "modeExplore": "Explore",
+  "modeExploreDesc": "Read-only exploration. Blocks writes, never prompts.",
+  "modeAsk": "Ask to Edit",
+  "modeAskDesc": "Prompts before making edits.",
+  "modeExecute": "Execute",
+  "modeExecuteDesc": "Automatic execution, no prompts.",
+  "modeUltrathink": "Ultrathink",
+  "modeUltrathinkDesc": "Extended reasoning for complex problems.",
+  "searchCommands": "Search commands...",
+  "noCommandsFound": "No commands found",
+  "modesSection": "Modes",
+  "featuresSection": "Features",
+  "recentDirsSection": "Recent Working Directories",
+  "useAtForMentions": "Use @ for skills and files"
 }

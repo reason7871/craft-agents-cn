@@ -395,7 +395,7 @@ export default function SourceInfoPage({ sourceSlug, workspaceId, onDelete }: So
 
           {/* Connection */}
           <Info_Section
-            title="Connection"
+            title="连接"
             description={getConnectionDescription(source)}
             actions={
               // EditPopover for AI-assisted config.json editing with "Edit File" as secondary action
@@ -403,7 +403,7 @@ export default function SourceInfoPage({ sourceSlug, workspaceId, onDelete }: So
                 trigger={<EditButton />}
                 {...getEditConfig('source-config', source.folderPath)}
                 secondaryAction={{
-                  label: 'Edit File',
+                  label: '编辑文件',
                   filePath: `${source.folderPath}/config.json`,
                 }}
               />
@@ -419,9 +419,9 @@ export default function SourceInfoPage({ sourceSlug, workspaceId, onDelete }: So
                 </div>
               )}
             >
-              <Info_Table.Row label="Type" value={source.config.type.toUpperCase()} />
+              <Info_Table.Row label="类型" value={source.config.type.toUpperCase()} />
               {sourceUrl && (
-                <Info_Table.Row label="URL">
+                <Info_Table.Row label="网址">
                   <button
                     onClick={handleOpenUrl}
                     className="truncate hover:underline text-foreground focus:outline-none focus-visible:underline text-left block w-full"
@@ -430,14 +430,14 @@ export default function SourceInfoPage({ sourceSlug, workspaceId, onDelete }: So
                   </button>
                 </Info_Table.Row>
               )}
-              <Info_Table.Row label="Last Tested" value={formatRelativeTime(source.config.lastTestedAt)} />
+              <Info_Table.Row label="上次测试" value={formatRelativeTime(source.config.lastTestedAt)} />
             </Info_Table>
           </Info_Section>
 
           {/* Permissions - for API and local sources */}
           {source.config.type !== 'mcp' && permissionsConfig && apiPermissionsData.length > 0 && (
             <Info_Section
-              title="Permissions"
+              title="权限"
               description={getPermissionsDescription(source)}
               actions={
                 // EditPopover for AI-assisted permissions.json editing
@@ -445,28 +445,28 @@ export default function SourceInfoPage({ sourceSlug, workspaceId, onDelete }: So
                   trigger={<EditButton />}
                   {...getEditConfig('source-permissions', source.folderPath)}
                   secondaryAction={{
-                    label: 'Edit File',
+                    label: '编辑文件',
                     filePath: `${source.folderPath}/permissions.json`,
                   }}
                 />
               }
             >
-              <PermissionsDataTable data={apiPermissionsData} fullscreen fullscreenTitle="Permissions" />
+              <PermissionsDataTable data={apiPermissionsData} fullscreen fullscreenTitle="权限" />
             </Info_Section>
           )}
 
           {/* Tools - for MCP sources */}
           {source.config.type === 'mcp' && (
             <Info_Section
-              title="Tools"
-              description="Operations exposed by this server."
+              title="工具"
+              description="此服务器公开的操作。"
               actions={
                 // EditPopover for AI-assisted tool permissions editing
                 <EditPopover
                   trigger={<EditButton />}
                   {...getEditConfig('source-tool-permissions', source.folderPath)}
                   secondaryAction={{
-                    label: 'Edit File',
+                    label: '编辑文件',
                     filePath: `${source.folderPath}/permissions.json`,
                   }}
                 />
@@ -483,7 +483,7 @@ export default function SourceInfoPage({ sourceSlug, workspaceId, onDelete }: So
           {/* Permissions - for MCP sources */}
           {source.config.type === 'mcp' && permissionsConfig && mcpPermissionsData.length > 0 && (
             <Info_Section
-              title="Permissions"
+              title="权限"
               description={getPermissionsDescription(source)}
               actions={
                 // EditPopover for AI-assisted permissions.json editing
@@ -491,28 +491,28 @@ export default function SourceInfoPage({ sourceSlug, workspaceId, onDelete }: So
                   trigger={<EditButton />}
                   {...getEditConfig('source-permissions', source.folderPath)}
                   secondaryAction={{
-                    label: 'Edit File',
+                    label: '编辑文件',
                     filePath: `${source.folderPath}/permissions.json`,
                   }}
                 />
               }
             >
-              <PermissionsDataTable data={mcpPermissionsData} hideTypeColumn fullscreen fullscreenTitle="Permissions" />
+              <PermissionsDataTable data={mcpPermissionsData} hideTypeColumn fullscreen fullscreenTitle="权限" />
             </Info_Section>
           )}
 
           {/* Documentation */}
           {source.guide?.raw && (
             <Info_Section
-              title="Documentation"
-              description="Context and guidelines for the agent."
+              title="文档"
+              description="代理的上下文和指南。"
               actions={
                 // EditPopover for AI-assisted guide.md editing with "Edit File" as secondary action
                 <EditPopover
                   trigger={<EditButton />}
                   {...getEditConfig('source-guide', source.folderPath)}
                   secondaryAction={{
-                    label: 'Edit File',
+                    label: '编辑文件',
                     filePath: `${source.folderPath}/guide.md`,
                   }}
                 />

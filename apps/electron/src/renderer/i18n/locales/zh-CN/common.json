@@ -48,5 +48,19 @@
   "errorLoadingContent": "加载内容出错",
   "searchSources": "搜索来源...",
   "filterFolders": "筛选文件夹...",
-  "notAuthenticated": "未认证"
+  "notAuthenticated": "未认证",
+  "modeExplore": "探索",
+  "modeExploreDesc": "只读探索。阻止写入，从不提示。",
+  "modeAsk": "询问后编辑",
+  "modeAskDesc": "编辑前先询问。",
+  "modeExecute": "执行",
+  "modeExecuteDesc": "自动执行，无提示。",
+  "modeUltrathink": "深度思考",
+  "modeUltrathinkDesc": "复杂问题的扩展推理。",
+  "searchCommands": "搜索命令...",
+  "noCommandsFound": "未找到命令",
+  "modesSection": "模式",
+  "featuresSection": "功能",
+  "recentDirsSection": "最近工作目录",
+  "useAtForMentions": "使用 @ 来提及技能和文件"
 }

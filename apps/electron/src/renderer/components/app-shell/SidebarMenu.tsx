@@ -179,11 +179,13 @@ export function SidebarMenu({
             <span className="flex-1">{t('addSource')}</span>
           </MenuItem>
         )}
+        {/* 隐藏"了解更多"链接
         <Separator />
         <MenuItem onClick={() => window.electronAPI.openUrl(getDocUrl(docFeature))}>
           <ExternalLink className="h-3.5 w-3.5" />
           <span className="flex-1">{learnMoreLabel}</span>
         </MenuItem>
+        */}
       </>
     )
   }

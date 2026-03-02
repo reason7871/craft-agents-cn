@@ -57,18 +57,68 @@ Write-Host ""
 
 # 0. Kill any lingering processes that might lock files
 Write-Host "Killing any lingering node/npm processes..."
+
+# Get the parent process ID (the process that launched this PowerShell script)
+# This is typically Claude Code (node) if running from Claude, or explorer/cmd if running directly
+$currentPid = $PID
+try {
+    $parentProcess = (Get-CimInstance Win32_Process -Filter "ProcessId=$currentPid").ParentProcessId
+    $parentProcessName = (Get-Process -Id $parentProcess -ErrorAction SilentlyContinue).ProcessName
+    Write-Host "  Parent process: $parentProcessName (PID: $parentProcess) - will be excluded from cleanup" -ForegroundColor Cyan
+} catch {
+    $parentProcess = $null
+    Write-Host "  Could not determine parent process, proceeding with caution" -ForegroundColor Yellow
+}
+
+# Also get all ancestor processes to exclude (in case Claude Code spawns intermediate processes)
+$excludePids = @($currentPid)
+if ($parentProcess) {
+    $excludePids += $parentProcess
+    # Walk up the process tree to find all ancestors
+    $currentParent = $parentProcess
+    while ($currentParent) {
+        try {
+            $ancestor = (Get-CimInstance Win32_Process -Filter "ProcessId=$currentParent" -ErrorAction SilentlyContinue)
+            if ($ancestor) {
+                $excludePids += $currentParent
+                $currentParent = $ancestor.ParentProcessId
+            } else {
+                break
+            }
+        } catch {
+            break
+        }
+    }
+}
+Write-Host "  Excluding PIDs from cleanup: $($excludePids -join ', ')" -ForegroundColor Cyan
+
 $processesToKill = @('node', 'npm', 'electron', 'electron-builder')
 foreach ($procName in $processesToKill) {
     Get-Process -Name $procName -ErrorAction SilentlyContinue | ForEach-Object {
-        Write-Host "  Killing $($_.ProcessName) (PID: $($_.Id))..." -ForegroundColor Yellow
-        Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
+        if ($_.Id -in $excludePids) {
+            Write-Host "  Skipping $($_.ProcessName) (PID: $($_.Id)) - ancestor process" -ForegroundColor Green
+        } else {
+            Write-Host "  Killing $($_.ProcessName) (PID: $($_.Id))..." -ForegroundColor Yellow
+            Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
+        }
     }
 }
 # Give processes time to fully terminate
 Start-Sleep -Seconds 2
 
 # 1. Clean previous build artifacts (with retry for locked files)
+# Note: Preserve vendor/bun to avoid re-downloading
 Write-Host "Cleaning previous builds..."
+
+# Backup bun.exe if it exists
+$BunExePath = "$ElectronDir\vendor\bun\bun.exe"
+$BunBackupDir = Join-Path $env:TEMP "bun-backup-$(Get-Random)"
+if (Test-Path $BunExePath) {
+    Write-Host "  Backing up bun.exe to preserve it during cleanup..."
+    New-Item -ItemType Directory -Force -Path $BunBackupDir | Out-Null
+    Copy-Item $BunExePath $BunBackupDir -Force
+}
+
 $foldersToClean = @(
     "$ElectronDir\vendor",
     "$ElectronDir\node_modules\@anthropic-ai",
@@ -91,6 +141,14 @@ foreach ($folder in $foldersToClean) {
     }
 }
 
+# Restore bun.exe if it was backed up
+if (Test-Path "$BunBackupDir\bun.exe") {
+    Write-Host "  Restoring bun.exe from backup..."
+    New-Item -ItemType Directory -Force -Path "$ElectronDir\vendor\bun" | Out-Null
+    Copy-Item "$BunBackupDir\bun.exe" "$ElectronDir\vendor\bun\bun.exe" -Force
+    Remove-Item -Recurse -Force $BunBackupDir -ErrorAction SilentlyContinue
+}
+
 # 2. Install dependencies
 Write-Host "Installing dependencies..."
 Push-Location $RootDir
@@ -100,58 +158,63 @@ try {
     Pop-Location
 }
 
-# 3. Download Bun binary for Windows
+# 3. Download Bun binary for Windows (if not already present)
 # Use baseline build - works on all x64 CPUs (no AVX2 requirement)
-Write-Host "Downloading Bun $BunVersion for Windows x64 (baseline)..."
-New-Item -ItemType Directory -Force -Path "$ElectronDir\vendor\bun" | Out-Null
+$BunExePath = "$ElectronDir\vendor\bun\bun.exe"
 
-$BunDownload = "bun-windows-x64-baseline"
-$TempDir = Join-Path $env:TEMP "bun-download-$(Get-Random)"
-New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
+if (Test-Path $BunExePath) {
+    Write-Host "Bun binary already exists at $BunExePath, skipping download" -ForegroundColor Green
+} else {
+    Write-Host "Downloading Bun $BunVersion for Windows x64 (baseline)..."
+    New-Item -ItemType Directory -Force -Path "$ElectronDir\vendor\bun" | Out-Null
 
-try {
-    # Download binary and checksums
-    $ZipUrl = "https://github.com/oven-sh/bun/releases/download/$BunVersion/$BunDownload.zip"
-    $ChecksumUrl = "https://github.com/oven-sh/bun/releases/download/$BunVersion/SHASUMS256.txt"
+    $BunDownload = "bun-windows-x64-baseline"
+    $TempDir = Join-Path $env:TEMP "bun-download-$(Get-Random)"
+    New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
 
-    Write-Host "Downloading from $ZipUrl..."
-    Invoke-WebRequest -Uri $ZipUrl -OutFile "$TempDir\$BunDownload.zip"
-    Invoke-WebRequest -Uri $ChecksumUrl -OutFile "$TempDir\SHASUMS256.txt"
+    try {
+        # Download binary and checksums
+        $ZipUrl = "https://github.com/oven-sh/bun/releases/download/$BunVersion/$BunDownload.zip"
+        $ChecksumUrl = "https://github.com/oven-sh/bun/releases/download/$BunVersion/SHASUMS256.txt"
 
-    # Verify checksum
-    Write-Host "Verifying checksum..."
-    $ExpectedHash = (Get-Content "$TempDir\SHASUMS256.txt" | Select-String "$BunDownload.zip").ToString().Split(" ")[0]
-    $ActualHash = (Get-FileHash "$TempDir\$BunDownload.zip" -Algorithm SHA256).Hash.ToLower()
+        Write-Host "Downloading from $ZipUrl..."
+        Invoke-WebRequest -Uri $ZipUrl -OutFile "$TempDir\$BunDownload.zip"
+        Invoke-WebRequest -Uri $ChecksumUrl -OutFile "$TempDir\SHASUMS256.txt"
 
-    if ($ActualHash -ne $ExpectedHash) {
-        throw "Checksum verification failed! Expected: $ExpectedHash, Got: $ActualHash"
+        # Verify checksum
+        Write-Host "Verifying checksum..."
+        $ExpectedHash = (Get-Content "$TempDir\SHASUMS256.txt" | Select-String "$BunDownload.zip").ToString().Split(" ")[0]
+        $ActualHash = (Get-FileHash "$TempDir\$BunDownload.zip" -Algorithm SHA256).Hash.ToLower()
+
+        if ($ActualHash -ne $ExpectedHash) {
+            throw "Checksum verification failed! Expected: $ExpectedHash, Got: $ActualHash"
+        }
+        Write-Host "Checksum verified successfully" -ForegroundColor Green
+
+        # Extract and install using robocopy for better file handle management
+        Write-Host "Extracting Bun..."
+        Expand-Archive -Path "$TempDir\$BunDownload.zip" -DestinationPath $TempDir -Force
+
+        # Unblock in temp first (before copy)
+        Unblock-File -Path "$TempDir\$BunDownload\bun.exe" -ErrorAction SilentlyContinue
+
+        # Use robocopy with retries - handles transient file locks better than Copy-Item
+        # /R:5 = 5 retries, /W:3 = 3 second wait between retries, /NP = no progress, /NFL /NDL = quiet
+        Write-Host "Copying bun.exe with robocopy..."
+        $robocopyResult = robocopy "$TempDir\$BunDownload" "$ElectronDir\vendor\bun" "bun.exe" /R:5 /W:3 /NP /NFL /NDL
+        # Robocopy exit codes: 0-7 are success, 8+ are errors
+        if ($LASTEXITCODE -ge 8) {
+            throw "robocopy failed with exit code $LASTEXITCODE"
+        }
+
+        Write-Host "Bun extracted to: $BunExePath" -ForegroundColor Green
+
+        # Give Windows time to release any file handles from the copy
+        Write-Host "Waiting for file handles to release..."
+        Start-Sleep -Seconds 3
+    } finally {
+        Remove-Item -Recurse -Force $TempDir -ErrorAction SilentlyContinue
     }
-    Write-Host "Checksum verified successfully" -ForegroundColor Green
-
-    # Extract and install using robocopy for better file handle management
-    Write-Host "Extracting Bun..."
-    Expand-Archive -Path "$TempDir\$BunDownload.zip" -DestinationPath $TempDir -Force
-
-    # Unblock in temp first (before copy)
-    Unblock-File -Path "$TempDir\$BunDownload\bun.exe" -ErrorAction SilentlyContinue
-
-    # Use robocopy with retries - handles transient file locks better than Copy-Item
-    # /R:5 = 5 retries, /W:3 = 3 second wait between retries, /NP = no progress, /NFL /NDL = quiet
-    Write-Host "Copying bun.exe with robocopy..."
-    $robocopyResult = robocopy "$TempDir\$BunDownload" "$ElectronDir\vendor\bun" "bun.exe" /R:5 /W:3 /NP /NFL /NDL
-    # Robocopy exit codes: 0-7 are success, 8+ are errors
-    if ($LASTEXITCODE -ge 8) {
-        throw "robocopy failed with exit code $LASTEXITCODE"
-    }
-
-    $BunExePath = "$ElectronDir\vendor\bun\bun.exe"
-    Write-Host "Bun extracted to: $BunExePath" -ForegroundColor Green
-
-    # Give Windows time to release any file handles from the copy
-    Write-Host "Waiting for file handles to release..."
-    Start-Sleep -Seconds 3
-} finally {
-    Remove-Item -Recurse -Force $TempDir -ErrorAction SilentlyContinue
 }
 
 # 4. Copy SDK from root node_modules (monorepo hoisting)

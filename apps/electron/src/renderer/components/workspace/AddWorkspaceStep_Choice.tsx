@@ -60,23 +60,23 @@ export function AddWorkspaceStep_Choice({
     <AddWorkspaceContainer>
       <div className="mt-2" />
       <AddWorkspaceStepHeader
-        title="Add Workspace"
-        description="Where your ideas meet the tools to make them happen."
+        title="添加工作区"
+        description="在这里让您的想法变成现实。"
       />
 
       <div className="mt-8 w-full space-y-3">
         <ChoiceCard
           icon={<FolderPlus className="h-5 w-5" />}
-          title="Create new"
-          description="Start fresh with an empty workspace."
+          title="新建工作区"
+          description="从空白工作区开始。"
           onClick={onCreateNew}
           variant="primary"
         />
 
         <ChoiceCard
           icon={<FolderOpen className="h-5 w-5" />}
-          title="Open folder"
-          description="Choose an existing folder as workspace."
+          title="打开文件夹"
+          description="选择现有文件夹作为工作区。"
           onClick={onOpenFolder}
         />
       </div>

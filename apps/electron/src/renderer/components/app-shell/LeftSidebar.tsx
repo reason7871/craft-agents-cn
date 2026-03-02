@@ -179,7 +179,7 @@ export function LeftSidebar({ links, isCollapsed, getItemProps, focusedItemId, i
           isNested ? "pl-5 pr-0 relative" : "px-2"
         )}
         role="navigation"
-        aria-label={isNested ? "Sub navigation" : "Main navigation"}
+        aria-label={isNested ? "子导航" : "主导航"}
         {...navProps}
       >
         {/* Vertical line for nested items - 4px left of chevron center */}

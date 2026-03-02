@@ -75,7 +75,7 @@ export function SessionSearchHeader({
           <button
             onClick={onSearchClose}
             className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 hover:bg-foreground/10 rounded"
-            title="Close search"
+            title="关闭搜索"
           >
             <X className="h-3.5 w-3.5 text-muted-foreground" />
           </button>
@@ -88,10 +88,10 @@ export function SessionSearchHeader({
           {isSearching ? (
             <>
               <Spinner className="text-[9px] text-foreground/50" />
-              <span>Loading…</span>
+              <span>加载中…</span>
             </>
           ) : (
-            <span>{exceededLimit ? '100+' : (resultCount ?? 0)} results</span>
+            <span>{exceededLimit ? '100+' : (resultCount ?? 0)} 个结果</span>
           )}
         </div>
       )}

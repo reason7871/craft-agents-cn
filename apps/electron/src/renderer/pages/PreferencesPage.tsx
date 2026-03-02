@@ -186,7 +186,7 @@ export default function PreferencesPage() {
       <button
         onClick={() => window.electronAPI.showInFolder('~/.iweather/preferences.json')}
         className="flex items-center gap-1 text-xs h-7 px-2 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground"
-        title="Open in Finder"
+        title="在文件夹中显示"
       >
         <ExternalLink className="h-3 w-3" />
       </button>
@@ -196,7 +196,7 @@ export default function PreferencesPage() {
           className="flex items-center gap-1 text-xs h-7 px-2 rounded-md bg-foreground/5 hover:bg-foreground/10 text-muted-foreground"
         >
           <RotateCcw className="h-3 w-3" />
-          Revert
+          还原
         </button>
         <Button
           variant="default"
@@ -221,61 +221,61 @@ export default function PreferencesPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <PanelHeader title="Preferences" actions={headerActions} />
+      <PanelHeader title="偏好设置" actions={headerActions} />
       <Separator />
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-6">
           {/* Basic Info */}
           <section>
-            <SectionHeader>Basic Info</SectionHeader>
+            <SectionHeader>基本信息</SectionHeader>
             <div className="space-y-1">
               <FormField
-                label="Name"
+                label="姓名"
                 value={formState.name}
                 onChange={(v) => updateField('name', v)}
-                placeholder="Your name"
+                placeholder="您的姓名"
               />
               <FormField
-                label="Timezone"
+                label="时区"
                 value={formState.timezone}
                 onChange={(v) => updateField('timezone', v)}
-                placeholder="e.g., America/New_York"
+                placeholder="例如：Asia/Shanghai"
               />
               <FormField
-                label="Language"
+                label="语言"
                 value={formState.language}
                 onChange={(v) => updateField('language', v)}
-                placeholder="e.g., English"
+                placeholder="例如：中文"
               />
             </div>
           </section>
 
           {/* Location */}
           <section>
-            <SectionHeader>Location</SectionHeader>
+            <SectionHeader>位置</SectionHeader>
             <div className="space-y-1">
               <FormField
-                label="City"
+                label="城市"
                 value={formState.city}
                 onChange={(v) => updateField('city', v)}
-                placeholder="e.g., New York"
+                placeholder="例如：北京"
               />
               <FormField
-                label="Country"
+                label="国家"
                 value={formState.country}
                 onChange={(v) => updateField('country', v)}
-                placeholder="e.g., USA"
+                placeholder="例如：中国"
               />
             </div>
           </section>
 
           {/* Notes */}
           <section>
-            <SectionHeader>Notes</SectionHeader>
+            <SectionHeader>备注</SectionHeader>
             <Textarea
               value={formState.notes}
               onChange={(e) => updateField('notes', e.target.value)}
-              placeholder="Any additional information you'd like to share with the AI assistant..."
+              placeholder="您希望与 AI 助手分享的任何其他信息..."
               className="min-h-[120px] text-sm resize-y"
             />
           </section>

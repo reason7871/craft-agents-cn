@@ -51,12 +51,12 @@ export function AddWorkspaceStep_OpenFolder({
         )}
       >
         <ArrowLeft className="h-4 w-4" />
-        Back
+        返回
       </button>
 
       <AddWorkspaceStepHeader
-        title="Choose existing folder"
-        description="Choose any folder to use as workspace."
+        title="选择现有文件夹"
+        description="选择任意文件夹作为工作区。"
       />
 
       <div className="mt-6 w-full space-y-6">
@@ -71,14 +71,14 @@ export function AddWorkspaceStep_OpenFolder({
             {selectedPath ? (
               <p className="text-sm text-foreground truncate">{selectedPath}</p>
             ) : (
-              <p className="text-sm text-muted-foreground">No folder selected</p>
+              <p className="text-sm text-muted-foreground">未选择文件夹</p>
             )}
           </div>
           <AddWorkspaceSecondaryButton
             onClick={handleBrowse}
             disabled={isCreating}
           >
-            Browse
+            浏览
           </AddWorkspaceSecondaryButton>
         </div>
 
@@ -86,12 +86,12 @@ export function AddWorkspaceStep_OpenFolder({
         {selectedPath && (
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
-              Workspace name
+              工作区名称
             </label>
             <Input
               value={workspaceName}
               onChange={(e) => setWorkspaceName(e.target.value)}
-              placeholder="My Workspace"
+              placeholder="我的工作区"
               disabled={isCreating}
             />
           </div>
@@ -102,9 +102,9 @@ export function AddWorkspaceStep_OpenFolder({
           onClick={handleOpen}
           disabled={!canOpen || isCreating}
           loading={isCreating}
-          loadingText="Opening..."
+          loadingText="打开中..."
         >
-          Open
+          打开
         </AddWorkspacePrimaryButton>
       </div>
     </AddWorkspaceContainer>

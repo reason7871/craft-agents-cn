@@ -393,7 +393,7 @@ function DataTableCardSample({ title, columns, rows }: { title: string; columns:
         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/50" />
         <input
           type="text"
-          placeholder="Filter rows..."
+          placeholder="筛选行..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="w-full pl-8 pr-3 py-1.5 text-[13px] rounded-md border border-foreground/[0.08] bg-foreground/[0.02] text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/20 transition-colors"

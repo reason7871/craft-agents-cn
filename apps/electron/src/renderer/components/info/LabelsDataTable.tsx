@@ -91,14 +91,14 @@ const columns: ColumnDef<LabelConfig>[] = [
   },
   {
     accessorKey: 'name',
-    header: ({ column }) => <SortableHeader column={column} title="Name" />,
+    header: ({ column }) => <SortableHeader column={column} title="名称" />,
     cell: ({ row }) => <ExpandableNameCell row={row} />,
     meta: { fillWidth: true },
   },
   {
     id: 'valueType',
     accessorKey: 'valueType',
-    header: ({ column }) => <SortableHeader column={column} title="Type" />,
+    header: ({ column }) => <SortableHeader column={column} title="类型" />,
     cell: ({ row }) => (
       <div className="p-1.5 pl-2.5">
         {row.original.valueType ? (
@@ -144,7 +144,7 @@ export function LabelsDataTable({
         'text-muted-foreground/50 hover:text-foreground',
         'focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:opacity-100'
       )}
-      title="View Fullscreen"
+      title="全屏查看"
     >
       <Maximize2 className="w-3.5 h-3.5" />
     </button>

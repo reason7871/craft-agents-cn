@@ -33,8 +33,10 @@ export function expandPath(inputPath: string, basePath?: string): string {
     return home;
   }
 
-  // Handle ~/ prefix
+  // Handle ~/ prefix (Unix) and ~\ prefix (Windows)
   if (expanded.startsWith('~/')) {
+    expanded = join(home, expanded.slice(2));
+  } else if (expanded.startsWith('~\\')) {
     expanded = join(home, expanded.slice(2));
   }
 
@@ -79,11 +81,13 @@ export function toPortablePath(absolutePath: string): string {
   const homePrefixWin = home + '\\';
 
   if (normalized.startsWith(homePrefix)) {
-    return '~/' + normalized.slice(homePrefix.length);
+    // Convert backslashes to forward slashes for consistent portable format
+    return '~/' + normalized.slice(homePrefix.length).replace(/\\/g, '/');
   }
 
   if (normalized.startsWith(homePrefixWin)) {
-    return '~/' + normalized.slice(homePrefixWin.length);
+    // Convert backslashes to forward slashes for consistent portable format
+    return '~/' + normalized.slice(homePrefixWin.length).replace(/\\/g, '/');
   }
 
   // Path is outside home directory, keep as absolute
