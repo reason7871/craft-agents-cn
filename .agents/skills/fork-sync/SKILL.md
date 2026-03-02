@@ -123,6 +123,17 @@ bunx electron-builder --win --x64
 
 ## 输出位置
 
-打包完成后
-exe 文件位于:
+打包完成后，exe 文件位于:
 `apps/electron/release/Craft-Agent-x64.exe`
+
+## 快速运行
+
+### 同步上游并应用汉化
+```bash
+bash .agents/skills/fork-sync/scripts/sync-and-localize.sh
+```
+
+### 构建并打包
+```bash
+bash .agents/skills/fork-sync/scripts/build-exe.sh
+```
