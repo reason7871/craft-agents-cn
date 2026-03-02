@@ -7,6 +7,40 @@ import type { SessionStatus } from '@/config/session-status-config'
 import type { LabelConfig } from '@craft-agent/shared/labels'
 import { LabelIcon } from '@/components/ui/label-icon'
 
+// ============================================================================
+// Chinese Localization - Status and Label translations
+// ============================================================================
+
+const STATUS_TRANSLATIONS: Record<string, string> = {
+  'backlog': '待办',
+  'todo': '待处理',
+  'needs-review': '需审核',
+  'done': '已完成',
+  'cancelled': '已取消',
+  'in-progress': '进行中',
+}
+
+const LABEL_TRANSLATIONS: Record<string, string> = {
+  'development': '开发',
+  'code': '代码',
+  'bug': '错误',
+  'automation': '自动化',
+  'content': '内容',
+  'writing': '写作',
+  'research': '研究',
+  'design': '设计',
+  'priority': '优先级',
+  'project': '项目',
+}
+
+function getTranslatedStatus(label: string): string {
+  return STATUS_TRANSLATIONS[label.toLowerCase()] || label
+}
+
+function getTranslatedLabel(name: string): string {
+  return LABEL_TRANSLATIONS[name.toLowerCase()] || name
+}
+
 export interface ShareMenuItemsProps {
   sessionId: string
   sharedUrl: string
@@ -22,26 +56,26 @@ export function ShareMenuItems({ sessionId, sharedUrl, menu }: ShareMenuItemsPro
 
   const handleCopyLink = async () => {
     await navigator.clipboard.writeText(sharedUrl)
-    toast.success('Link copied to clipboard')
+    toast.success('链接已复制到剪贴板')
   }
 
   const handleUpdateShare = async () => {
     const result = await window.electronAPI.sessionCommand(sessionId, { type: 'updateShare' })
     if (result && 'success' in result && result.success) {
-      toast.success('Share updated')
+      toast.success('分享已更新')
     } else {
       const errorMsg = result && 'error' in result ? result.error : undefined
-      toast.error('Failed to update share', { description: errorMsg })
+      toast.error('更新分享失败', { description: errorMsg })
     }
   }
 
   const handleRevokeShare = async () => {
     const result = await window.electronAPI.sessionCommand(sessionId, { type: 'revokeShare' })
     if (result && 'success' in result && result.success) {
-      toast.success('Sharing stopped')
+      toast.success('已停止分享')
     } else {
       const errorMsg = result && 'error' in result ? result.error : undefined
-      toast.error('Failed to stop sharing', { description: errorMsg })
+      toast.error('停止分享失败', { description: errorMsg })
     }
   }
 
@@ -49,20 +83,20 @@ export function ShareMenuItems({ sessionId, sharedUrl, menu }: ShareMenuItemsPro
     <>
       <MenuItem onClick={handleOpenInBrowser}>
         <Globe className="h-3.5 w-3.5" />
-        <span className="flex-1">Open in Browser</span>
+        <span className="flex-1">在浏览器中打开</span>
       </MenuItem>
       <MenuItem onClick={handleCopyLink}>
         <Copy className="h-3.5 w-3.5" />
-        <span className="flex-1">Copy Link</span>
+        <span className="flex-1">复制链接</span>
       </MenuItem>
       <MenuItem onClick={handleUpdateShare}>
         <RefreshCw className="h-3.5 w-3.5" />
-        <span className="flex-1">Update Share</span>
+        <span className="flex-1">更新分享</span>
       </MenuItem>
       <Separator />
       <MenuItem onClick={handleRevokeShare} variant="destructive">
         <Link2Off className="h-3.5 w-3.5" />
-        <span className="flex-1">Stop Sharing</span>
+        <span className="flex-1">停止分享</span>
       </MenuItem>
     </>
   )
@@ -99,7 +133,7 @@ export function StatusMenuItems({
             <span style={applyColor ? { color: state.resolvedColor } : undefined}>
               {bareIcon}
             </span>
-            <span className="flex-1">{state.label}</span>
+            <span className="flex-1">{getTranslatedStatus(state.label)}</span>
           </MenuItem>
         )
       })}
@@ -158,7 +192,7 @@ export function LabelMenuItems({
             <Sub key={label.id}>
               <SubTrigger className="pr-2">
                 <LabelIcon label={label} size="sm" hasChildren />
-                <span className="flex-1">{label.name}</span>
+                <span className="flex-1">{getTranslatedLabel(label.name)}</span>
                 {subtreeCount > 0 && (
                   <span className="text-[10px] text-foreground/50 tabular-nums -mr-2.5">
                     {subtreeCount}
@@ -173,7 +207,7 @@ export function LabelMenuItems({
                   }}
                 >
                   <LabelIcon label={label} size="sm" hasChildren />
-                  <span className="flex-1">{label.name}</span>
+                  <span className="flex-1">{getTranslatedLabel(label.name)}</span>
                   <span className="w-3.5 ml-4">
                     {isApplied && <Check className="h-3.5 w-3.5 text-foreground" />}
                   </span>
@@ -199,7 +233,7 @@ export function LabelMenuItems({
             }}
           >
             <LabelIcon label={label} size="sm" />
-            <span className="flex-1">{label.name}</span>
+            <span className="flex-1">{getTranslatedLabel(label.name)}</span>
             <span className="w-3.5 ml-4">
               {isApplied && <Check className="h-3.5 w-3.5 text-foreground" />}
             </span>

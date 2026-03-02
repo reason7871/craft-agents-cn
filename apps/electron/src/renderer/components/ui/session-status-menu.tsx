@@ -13,6 +13,23 @@ import {
 export { type SessionStatusId, type SessionStatus, getStateIcon, getStateColor }
 
 // ============================================================================
+// Chinese Localization - Status translations
+// ============================================================================
+
+const STATUS_TRANSLATIONS: Record<string, string> = {
+  'backlog': '待办',
+  'todo': '待处理',
+  'needs-review': '需审核',
+  'done': '已完成',
+  'cancelled': '已取消',
+  'in-progress': '进行中',
+}
+
+function getTranslatedStatus(label: string): string {
+  return STATUS_TRANSLATIONS[label.toLowerCase()] || label
+}
+
+// ============================================================================
 // Shared Styles (matching slash-command-menu)
 // ============================================================================
 
@@ -37,7 +54,7 @@ function StateItemContent({ state }: { state: SessionStatus }) {
       >
         {state.icon}
       </span>
-      <div className="flex-1 min-w-0">{state.label}</div>
+      <div className="flex-1 min-w-0">{getTranslatedStatus(state.label)}</div>
     </>
   )
 }
@@ -92,20 +109,21 @@ export function SessionStatusMenu({
           ref={inputRef}
           value={filter}
           onValueChange={setFilter}
-          placeholder="Filter statuses..."
+          placeholder="筛选状态..."
           className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
         />
       </div>
       <CommandPrimitive.List className={MENU_LIST_STYLE}>
         <CommandPrimitive.Empty className="py-3 text-center text-sm text-muted-foreground">
-          No status found
+          未找到状态
         </CommandPrimitive.Empty>
         {states.map((state) => {
           const isActive = activeState === state.id
+          const translatedLabel = getTranslatedStatus(state.label)
           return (
             <CommandPrimitive.Item
               key={state.id}
-              value={state.label}
+              value={translatedLabel}
               onSelect={() => onSelect(state.id)}
               className={cn(
                 MENU_ITEM_STYLE,
@@ -133,7 +151,7 @@ export function SessionStatusMenu({
               <span className="shrink-0 flex items-center opacity-60">
                 {isArchived ? <ArchiveRestore className="w-3.5 h-3.5" /> : <Archive className="w-3.5 h-3.5" />}
               </span>
-              <div className="flex-1 min-w-0">{isArchived ? 'Unarchive' : 'Archive'}</div>
+              <div className="flex-1 min-w-0">{isArchived ? '取消归档' : '归档'}</div>
             </CommandPrimitive.Item>
           </>
         )}

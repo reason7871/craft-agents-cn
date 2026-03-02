@@ -17,6 +17,16 @@ import { getState } from '@/config/session-status-config'
 import { SessionStatusMenu } from '@/components/ui/session-status-menu'
 
 // ============================================================================
+// Chinese Localization
+// ============================================================================
+
+const PERMISSION_MODE_DISPLAY_NAMES: Record<PermissionMode, string> = {
+  'safe': '探索',
+  'ask': '询问',
+  'allow-all': '执行',
+}
+
+// ============================================================================
 // Permission Mode Icon Component
 // ============================================================================
 
@@ -485,7 +495,7 @@ function PermissionModeDropdown({ permissionMode, ultrathinkEnabled = false, onP
           style={{ '--shadow-color': currentStyle.shadowVar } as React.CSSProperties}
         >
           <PermissionModeIcon mode={optimisticMode} className="h-3.5 w-3.5" />
-          <span>{config.displayName}</span>
+          <span>{PERMISSION_MODE_DISPLAY_NAMES[optimisticMode] || config.displayName}</span>
           <ChevronDown className="h-3.5 w-3.5 opacity-60" />
         </button>
       </PopoverTrigger>

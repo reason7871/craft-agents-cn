@@ -100,15 +100,15 @@ export function SessionMenu({
     const result = await window.electronAPI.sessionCommand(sessionId, { type: 'shareToViewer' }) as { success: boolean; url?: string; error?: string } | undefined
     if (result?.success && result.url) {
       await navigator.clipboard.writeText(result.url)
-      toast.success('Link copied to clipboard', {
+      toast.success('链接已复制到剪贴板', {
         description: result.url,
         action: {
-          label: 'Open',
+          label: '打开',
           onClick: () => window.electronAPI.openUrl(result.url!),
         },
       })
     } else {
-      toast.error('Failed to share', { description: result?.error || 'Unknown error' })
+      toast.error('分享失败', { description: result?.error || '未知错误' })
     }
   }
 
@@ -120,16 +120,16 @@ export function SessionMenu({
     const result = await window.electronAPI.sessionCommand(sessionId, { type: 'copyPath' }) as { success: boolean; path?: string } | undefined
     if (result?.success && result.path) {
       await navigator.clipboard.writeText(result.path)
-      toast.success('Path copied to clipboard')
+      toast.success('路径已复制到剪贴板')
     }
   }
 
   const handleRefreshTitle = async () => {
     const result = await window.electronAPI.sessionCommand(sessionId, { type: 'refreshTitle' }) as { success: boolean; title?: string; error?: string } | undefined
     if (result?.success) {
-      toast.success('Title refreshed', { description: result.title })
+      toast.success('标题已刷新', { description: result.title })
     } else {
-      toast.error('Failed to refresh title', { description: result?.error || 'Unknown error' })
+      toast.error('刷新标题失败', { description: result?.error || '未知错误' })
     }
   }
 
@@ -162,13 +162,13 @@ export function SessionMenu({
       {!sharedUrl ? (
         <MenuItem onClick={handleShare}>
           <CloudUpload className="h-3.5 w-3.5" />
-          <span className="flex-1">Share</span>
+          <span className="flex-1">分享</span>
         </MenuItem>
       ) : (
         <Sub>
           <SubTrigger className="pr-2">
             <CloudUpload className="h-3.5 w-3.5" />
-            <span className="flex-1">Shared</span>
+            <span className="flex-1">已分享</span>
           </SubTrigger>
           <SubContent>
             <ShareMenuItems sessionId={sessionId} sharedUrl={sharedUrl} menu={{ MenuItem, Separator }} />
@@ -188,7 +188,7 @@ export function SessionMenu({
                 : icon
             })()}
           </span>
-          <span className="flex-1">Status</span>
+          <span className="flex-1">状态</span>
         </SubTrigger>
         <SubContent>
           <StatusMenuItems
@@ -205,7 +205,7 @@ export function SessionMenu({
         <Sub>
           <SubTrigger className="pr-2">
             <Tag className="h-3.5 w-3.5" />
-            <span className="flex-1">Labels</span>
+            <span className="flex-1">标签</span>
             {sessionLabels.length > 0 && (
               <span className="text-[10px] text-muted-foreground tabular-nums -mr-2.5">
                 {sessionLabels.length}
@@ -227,12 +227,12 @@ export function SessionMenu({
       {!isFlagged ? (
         <MenuItem onClick={onFlag}>
           <Flag className="h-3.5 w-3.5 text-info" />
-          <span className="flex-1">Flag</span>
+          <span className="flex-1">标记</span>
         </MenuItem>
       ) : (
         <MenuItem onClick={onUnflag}>
           <FlagOff className="h-3.5 w-3.5" />
-          <span className="flex-1">Unflag</span>
+          <span className="flex-1">取消标记</span>
         </MenuItem>
       )}
 
@@ -240,12 +240,12 @@ export function SessionMenu({
       {!isArchived ? (
         <MenuItem onClick={onArchive}>
           <Archive className="h-3.5 w-3.5" />
-          <span className="flex-1">Archive</span>
+          <span className="flex-1">归档</span>
         </MenuItem>
       ) : (
         <MenuItem onClick={onUnarchive}>
           <ArchiveRestore className="h-3.5 w-3.5" />
-          <span className="flex-1">Unarchive</span>
+          <span className="flex-1">取消归档</span>
         </MenuItem>
       )}
 
@@ -253,7 +253,7 @@ export function SessionMenu({
       {!_hasUnread && _hasMessages && (
         <MenuItem onClick={onMarkUnread}>
           <MailOpen className="h-3.5 w-3.5" />
-          <span className="flex-1">Mark as Unread</span>
+          <span className="flex-1">标记为未读</span>
         </MenuItem>
       )}
 
@@ -262,13 +262,13 @@ export function SessionMenu({
       {/* Rename */}
       <MenuItem onClick={onRename}>
         <Pencil className="h-3.5 w-3.5" />
-        <span className="flex-1">Rename</span>
+        <span className="flex-1">重命名</span>
       </MenuItem>
 
       {/* Regenerate Title - AI-generate based on recent messages */}
       <MenuItem onClick={handleRefreshTitle}>
         <RefreshCw className="h-3.5 w-3.5" />
-        <span className="flex-1">Regenerate Title</span>
+        <span className="flex-1">重新生成标题</span>
       </MenuItem>
 
       <Separator />
@@ -276,19 +276,19 @@ export function SessionMenu({
       {/* Open in New Window */}
       <MenuItem onClick={onOpenInNewWindow}>
         <AppWindow className="h-3.5 w-3.5" />
-        <span className="flex-1">Open in New Window</span>
+        <span className="flex-1">在新窗口中打开</span>
       </MenuItem>
 
       {/* Show in file manager */}
       <MenuItem onClick={handleShowInFinder}>
         <FolderOpen className="h-3.5 w-3.5" />
-        <span className="flex-1">{`Show in ${getFileManagerName()}`}</span>
+        <span className="flex-1">{`在${getFileManagerName()}中显示`}</span>
       </MenuItem>
 
       {/* Copy Path */}
       <MenuItem onClick={handleCopyPath}>
         <Copy className="h-3.5 w-3.5" />
-        <span className="flex-1">Copy Path</span>
+        <span className="flex-1">复制路径</span>
       </MenuItem>
 
       <Separator />
@@ -296,7 +296,7 @@ export function SessionMenu({
       {/* Delete */}
       <MenuItem onClick={onDelete} variant="destructive">
         <Trash2 className="h-3.5 w-3.5" />
-        <span className="flex-1">Delete</span>
+        <span className="flex-1">删除</span>
       </MenuItem>
     </>
   )

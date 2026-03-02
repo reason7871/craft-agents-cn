@@ -78,21 +78,29 @@ function PermissionModeIcon({ mode, className }: PermissionModeIconProps) {
 // Icon size constant
 const MENU_ICON_SIZE = 'h-3.5 w-3.5'
 
+// Chinese translations for permission modes
+const PERMISSION_MODE_TRANSLATIONS: Record<PermissionMode, { label: string; description: string }> = {
+  'safe': { label: '探索', description: '只读探索，阻止写入，从不提示' },
+  'ask': { label: '询问后编辑', description: '编辑前先询问' },
+  'allow-all': { label: '执行', description: '自动执行，无提示' },
+}
+
 // Generate permission mode commands from centralized config
 const permissionModeCommands: SlashCommand[] = PERMISSION_MODE_ORDER.map(mode => {
   const config = PERMISSION_MODE_CONFIG[mode]
+  const translation = PERMISSION_MODE_TRANSLATIONS[mode]
   return {
     id: mode as SlashCommandId,
-    label: config.displayName,
-    description: config.description,
+    label: translation?.label || config.displayName,
+    description: translation?.description || config.description,
     icon: <PermissionModeIcon mode={mode} className={MENU_ICON_SIZE} />,
   }
 })
 
 const ultrathinkCommand: SlashCommand = {
   id: 'ultrathink',
-  label: 'Ultrathink',
-  description: 'Extended reasoning for complex problems',
+  label: '深度思考',
+  description: '复杂问题的扩展推理',
   icon: <Brain className={MENU_ICON_SIZE} />,
 }
 
@@ -198,7 +206,7 @@ export function SlashCommandMenu({
   activeCommands = [],
   onSelect,
   showFilter = false,
-  filterPlaceholder = 'Search commands...',
+  filterPlaceholder = '搜索命令...',
   className,
 }: SlashCommandMenuProps) {
   const [filter, setFilter] = React.useState('')
@@ -278,7 +286,7 @@ export function SlashCommandMenu({
       <CommandPrimitive.List className={MENU_LIST_STYLE}>
         {allFilteredCommands.length === 0 ? (
           <CommandPrimitive.Empty className="py-4 text-center text-sm text-muted-foreground">
-            No commands found
+            未找到命令
           </CommandPrimitive.Empty>
         ) : filteredGroups ? (
           // Group-based rendering with smart separators
@@ -482,7 +490,7 @@ export function InlineSlashCommand({
       {/* Always-visible footer hint for @ mentions */}
       <div className="h-px bg-border/50 mx-2" />
       <div className="px-3 py-2.5 select-none text-xs text-muted-foreground">
-        Use @ for skills and files
+        使用 @ 来提及技能和文件
       </div>
     </div>
   )
@@ -561,14 +569,14 @@ export function useInlineSlashCommand({
     // Modes section
     result.push({
       id: 'modes',
-      label: 'Modes',
+      label: '模式',
       items: permissionModeCommands,
     })
 
     // Features section
     result.push({
       id: 'features',
-      label: 'Features',
+      label: '功能',
       items: [ultrathinkCommand],
     })
 
@@ -583,7 +591,7 @@ export function useInlineSlashCommand({
 
       result.push({
         id: 'folders',
-        label: 'Recent Working Directories',
+        label: '最近工作目录',
         items: sortedFolders.map(path => ({
           id: path,
           type: 'folder' as const,
